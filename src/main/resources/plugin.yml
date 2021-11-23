@@ -1,0 +1,6 @@
+name: Artefact
+version: '${project.version}'
+main: fr.zelytra.artefact.Artefact
+api-version: 1.17
+authors: [ Zelytra ]
+website: https://zelytra.fr
