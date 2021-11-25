@@ -15,13 +15,17 @@ import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.worldEdit.WorldEditHandler;
 import fr.zelytra.novaStructura.utils.timer.Timer;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +90,14 @@ public class Structure {
                     " z: " + location.getBlockZ() +
                     " §8[" + timer.stop() + "]", LogType.INFO);
 
+    }
+
+    public boolean naturalDraw(Chunk chunk) {
+        //TODO Luck
+        //TODO check biome
+        //TODO check block spawn
+        //TODO check water or lava lack
+        return true;
     }
 
     public boolean generateFiles(@NotNull WorldEditHandler weh) {

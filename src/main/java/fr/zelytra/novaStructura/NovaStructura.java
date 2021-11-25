@@ -2,6 +2,7 @@ package fr.zelytra.novaStructura;
 
 import fr.zelytra.novaStructura.commands.Test;
 import fr.zelytra.novaStructura.commands.structure.StructureCommand;
+import fr.zelytra.novaStructura.events.EventManager;
 import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.logs.Logs;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
@@ -28,6 +29,7 @@ public final class NovaStructura extends JavaPlugin {
     public void onEnable() {
         Message.startUpMessage();
         regCommands();
+        EventManager.regEvents(this);
 
         isReloading = false;
         logs = new Logs();

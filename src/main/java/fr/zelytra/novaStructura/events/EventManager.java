@@ -9,6 +9,9 @@ public class EventManager {
     public static void regEvents(NovaStructura pl) {
         PluginManager pm = Bukkit.getPluginManager();
 
+        pm.registerEvents(new OnNewChunk(), pl);
+        pm.registerEvents(new ReloadingServer(), pl);
+
 
 
     }
