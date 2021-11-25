@@ -7,9 +7,9 @@
  * All right reserved
  */
 
-package fr.zelytra.artefact.events;
+package fr.zelytra.novaStructura.events;
 
-import fr.zelytra.artefact.Artefact;
+import fr.zelytra.novaStructura.NovaStructura;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -20,14 +20,14 @@ public class ReloadingServer implements Listener {
     @EventHandler
     public void onReload(PlayerCommandPreprocessEvent e) {
         if (e.getMessage().contains("/reload") || e.getMessage().contains("/rl")) {
-            Artefact.isReloading = true;
+            NovaStructura.isReloading = true;
         }
     }
 
     @EventHandler
     public void onReload(ServerCommandEvent e) {
         if (e.getCommand().contains("reload") || e.getCommand().contains("rl")) {
-            Artefact.isReloading = true;
+            NovaStructura.isReloading = true;
         }
     }
 }

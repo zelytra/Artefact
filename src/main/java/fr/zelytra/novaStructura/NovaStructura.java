@@ -1,14 +1,14 @@
-package fr.zelytra.artefact;
+package fr.zelytra.novaStructura;
 
-import fr.zelytra.artefact.manager.logs.LogType;
-import fr.zelytra.artefact.manager.logs.Logs;
-import fr.zelytra.artefact.manager.structure.StructureLoader;
-import fr.zelytra.artefact.utils.Message;
+import fr.zelytra.novaStructura.manager.logs.LogType;
+import fr.zelytra.novaStructura.manager.logs.Logs;
+import fr.zelytra.novaStructura.manager.structure.StructureLoader;
+import fr.zelytra.novaStructura.utils.Message;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Artefact extends JavaPlugin {
+public final class NovaStructura extends JavaPlugin {
 
-    private static Artefact instance;
+    private static NovaStructura instance;
     private static Logs logs;
 
     public static boolean debugMod = true;
@@ -41,13 +41,13 @@ public final class Artefact extends JavaPlugin {
 
     public static void log(String msg, LogType type) {
         if (debugMod) {
-            Artefact.getInstance().getServer().getConsoleSender().sendMessage(Message.CONSOLE_PREFIX.getMsg() + msg);
+            NovaStructura.getInstance().getServer().getConsoleSender().sendMessage(Message.CONSOLE_PREFIX.getMsg() + msg);
         }
         logs.log(msg, type);
 
     }
 
-    public static Artefact getInstance() {
+    public static NovaStructura getInstance() {
         return instance;
     }
 }

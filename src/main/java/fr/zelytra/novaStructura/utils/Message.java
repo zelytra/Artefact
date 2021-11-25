@@ -1,4 +1,4 @@
-package fr.zelytra.artefact.utils;
+package fr.zelytra.novaStructura.utils;
 
 public enum Message {
 

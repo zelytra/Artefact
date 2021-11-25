@@ -1,4 +1,4 @@
-package fr.zelytra.artefact.manager.structure;
+package fr.zelytra.novaStructura.manager.structure;
 
 public abstract class StructureLoader {
 

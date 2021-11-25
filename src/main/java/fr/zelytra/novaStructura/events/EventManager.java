@@ -1,12 +1,12 @@
-package fr.zelytra.artefact.events;
+package fr.zelytra.novaStructura.events;
 
-import fr.zelytra.artefact.Artefact;
+import fr.zelytra.novaStructura.NovaStructura;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 
 public class EventManager {
 
-    public static void regEvents(Artefact pl) {
+    public static void regEvents(NovaStructura pl) {
         PluginManager pm = Bukkit.getPluginManager();
 
 

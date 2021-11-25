@@ -7,9 +7,9 @@
  * All right reserved
  */
 
-package fr.zelytra.artefact.manager.logs;
+package fr.zelytra.novaStructura.manager.logs;
 
-import fr.zelytra.artefact.Artefact;
+import fr.zelytra.novaStructura.NovaStructura;
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -49,8 +49,8 @@ public class Logs {
 
     private void right() {
         synchronized (syncObject) {
-            if (!Artefact.isReloading && !Bukkit.getServer().isStopping()) {
-                Bukkit.getScheduler().runTaskAsynchronously(Artefact.getInstance(), () -> {
+            if (!NovaStructura.isReloading && !Bukkit.getServer().isStopping()) {
+                Bukkit.getScheduler().runTaskAsynchronously(NovaStructura.getInstance(), () -> {
                     rightTask();
                 });
             } else {
@@ -76,8 +76,8 @@ public class Logs {
 
     private void initLogsFile(String date) {
 
-        String currentDir = Artefact.getInstance().getDataFolder().getPath();
-        Artefact.getInstance().getDataFolder().mkdir();
+        String currentDir = NovaStructura.getInstance().getDataFolder().getPath();
+        NovaStructura.getInstance().getDataFolder().mkdir();
 
         File folder = new File(currentDir + File.separator + "logs");
 

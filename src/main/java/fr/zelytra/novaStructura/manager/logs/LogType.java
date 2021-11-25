@@ -7,7 +7,7 @@
  * All right reserved
  */
 
-package fr.zelytra.artefact.manager.logs;
+package fr.zelytra.novaStructura.manager.logs;
 
 public enum LogType {
     INFO("\u001B[36m","INFO"),
