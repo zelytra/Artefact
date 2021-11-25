@@ -1,8 +1,10 @@
 package fr.zelytra.novaStructura;
 
+import fr.zelytra.novaStructura.commands.Test;
+import fr.zelytra.novaStructura.commands.structure.StructureCommand;
 import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.logs.Logs;
-import fr.zelytra.novaStructura.manager.structure.StructureLoader;
+import fr.zelytra.novaStructura.manager.structure.StructureManager;
 import fr.zelytra.novaStructura.utils.Message;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,6 +17,8 @@ public final class NovaStructura extends JavaPlugin {
     public static String version = "v1.0";
     public static boolean isReloading = false;
 
+    public static StructureManager structureManager;
+
     @Override
     public void onLoad() {
         instance = this;
@@ -22,12 +26,14 @@ public final class NovaStructura extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.getServer().getConsoleSender().sendMessage(Message.CONSOLE_STARTUP.getMsg());
+        Message.startUpMessage();
+        regCommands();
 
         isReloading = false;
         logs = new Logs();
-        StructureLoader.load();
-        logs.log("§aArtefact started and ready to generate !",LogType.INFO);
+        structureManager = new StructureManager();
+
+        log("Started and ready to generate !", LogType.INFO);
     }
 
     @Override
@@ -36,12 +42,13 @@ public final class NovaStructura extends JavaPlugin {
     }
 
     private void regCommands() {
-
+        getCommand("test").setExecutor(new Test());
+        getCommand("novastruct").setExecutor(new StructureCommand());
     }
 
     public static void log(String msg, LogType type) {
         if (debugMod) {
-            NovaStructura.getInstance().getServer().getConsoleSender().sendMessage(Message.CONSOLE_PREFIX.getMsg() + msg);
+            NovaStructura.getInstance().getServer().getConsoleSender().sendMessage(Message.CONSOLE_PREFIX.getMsg() + type.getColor() + msg);
         }
         logs.log(msg, type);
 

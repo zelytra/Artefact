@@ -9,17 +9,23 @@
 
 package fr.zelytra.novaStructura.manager.logs;
 
+import org.bukkit.ChatColor;
+
 public enum LogType {
-    INFO("\u001B[36m","INFO"),
-    WARN("\u001B[33m","WARN"),
-    ERROR("\u001B[31m","ERROR");
+    INFO("\u001B[36m", "INFO", ChatColor.GOLD),
+    WARN("\u001B[33m", "WARN", ChatColor.YELLOW),
+    ERROR("\u001B[31m", "ERROR", ChatColor.RED);
 
-    String consoleColor;
-    String name;
+    private final String consoleColor;
+    private final String name;
+    private final ChatColor color;
 
-    LogType(String consoleColor, String name) {
+    LogType(String consoleColor, String name, ChatColor color) {
+
         this.consoleColor = consoleColor;
         this.name = name;
+        this.color = color;
+
     }
 
     public String getConsoleColor() {
@@ -28,5 +34,9 @@ public enum LogType {
 
     public String getName() {
         return name;
+    }
+
+    public ChatColor getColor(){
+        return color;
     }
 }

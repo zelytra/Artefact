@@ -1,6 +1,20 @@
-name: Artefact
+name: NovaStructura
 version: '${project.version}'
-main: fr.zelytra.artefact.Artefact
+main: fr.zelytra.novaStructura.NovaStructura
 api-version: 1.17
 authors: [ Zelytra ]
 website: https://zelytra.fr
+softdepend:
+  - WorldEdit
+
+commands:
+
+  test:
+    permission: novaStructure.test
+    description: Something can went wrong...
+
+  novastruct:
+    permission: novaStructure.struct
+    description: Structure commands handler
+    aliases:
+      - ns

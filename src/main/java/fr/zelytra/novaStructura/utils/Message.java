@@ -1,16 +1,12 @@
 package fr.zelytra.novaStructura.utils;
 
+import fr.zelytra.novaStructura.NovaStructura;
+import org.bukkit.Bukkit;
+
 public enum Message {
 
-    PLAYER_PREFIX("§8[§6Artefact§8]§r "),
-    CONSOLE_PREFIX("§8[§6Artefact§8]§r "),
-    CONSOLE_STARTUP("§6\n" +
-            "    ___         __       ____           __ \n" +
-            "   /   |  _____/ /____  / __/___ ______/ /_\n" +
-            "  / /| | / ___/ __/ _ \\/ /_/ __ `/ ___/ __/\n" +
-            " / ___ |/ /  / /_/  __/ __/ /_/ / /__/ /_  \n" +
-            "/_/  |_/_/   \\__/\\___/_/  \\__,_/\\___/\\__/  \n" +
-            "                                           \n§r");
+    PLAYER_PREFIX("§8[§6Nova§eStructura§8]§r "),
+    CONSOLE_PREFIX("§8[§6Nova§eStructura§8]§r ");
 
     private final String message;
 
@@ -23,8 +19,18 @@ public enum Message {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return message;
+    }
+
+    public static void startUpMessage() {
+        Bukkit.getConsoleSender().sendMessage("§8|   §6" + "             __                        ");
+        Bukkit.getConsoleSender().sendMessage("§8|   §6" + "|\\| _     _ (_ _|_ __    _ _|_    __ _ ");
+        Bukkit.getConsoleSender().sendMessage("§8|   §6" + "| |(_)\\_/(_|__) |_ | |_|(_  |_|_| | (_|");
+        Bukkit.getConsoleSender().sendMessage("§8|   §6");
+        Bukkit.getConsoleSender().sendMessage("§8|   §6by §6Zelytra");
+        Bukkit.getConsoleSender().sendMessage("§8|   " + NovaStructura.version);
+        Bukkit.getConsoleSender().sendMessage("§8|   §6");
     }
 
 }
