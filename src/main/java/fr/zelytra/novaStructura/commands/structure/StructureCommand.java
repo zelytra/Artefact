@@ -35,7 +35,7 @@ public class StructureCommand implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase("spawn")) {
 
                 Structure structure = Structure.getStructure(args[1]);
-                if (structure!=null)
+                if (structure != null)
                     structure.paste(player.getLocation());
 
                 return true;
@@ -43,6 +43,12 @@ public class StructureCommand implements CommandExecutor {
 
             } else if (args[0].equalsIgnoreCase("delete")) {
 
+                return true;
+
+            } else if (args[0].equalsIgnoreCase("info") && args.length == 2) {
+
+                Structure structure = Structure.getStructure(args[1]);
+                player.sendMessage(structure.toString());
                 return true;
 
             } else {

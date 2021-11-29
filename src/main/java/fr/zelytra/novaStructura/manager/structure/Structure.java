@@ -13,12 +13,16 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.logs.LogType;
+import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
 import fr.zelytra.novaStructura.manager.worldEdit.WorldEditHandler;
 import fr.zelytra.novaStructura.utils.timer.Timer;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,21 +37,19 @@ public class Structure {
 
     public static List<Structure> structureList = new ArrayList<>();
 
-    private double drawLuck;
-    private double drawOutOf;
-
     private String name;
-    private String world;
-    private Biome[] biomes;
-    private Material[] whitelistedBlocks;
+    private List<String> world;
+    private List<Biome> biomes;
+    private List<Material> whitelistedBlocks;
 
-    private File schematic;
+    private File schematic, config;
     private Clipboard clipboard;
 
     private int offsetX = 0, offsetY = 0, offsetZ = 0;
-    private int minHeight, maxHeight;
-    private boolean placeAir = true, randomRotation = true, spawnInWater = false, spawnInLava = false;
-    private boolean smartPast = false;
+    private double value = 1, outOf = 500;
+    private int minHeight = 0, maxHeight = 255;
+    private boolean placeAir = true, randomRotation = true, spawnOnWater = false, spawnOnLava = false;
+    private boolean smartPaste = false;
 
     public Structure(String name) {
         this.name = name;
@@ -71,6 +73,30 @@ public class Structure {
 
     }
 
+    public Structure(File schematic, File conf) {
+
+        try {
+            ClipboardFormat format = ClipboardFormats.findByFile(schematic);
+            ClipboardReader reader = format.getReader(new FileInputStream(schematic));
+
+            this.clipboard = reader.read();
+        } catch (IOException e) {
+            NovaStructura.log("Failed to read schematic: " + name, LogType.ERROR);
+            return;
+        }
+
+        this.name = schematic.getName().replace(StructureFolder.SCHEMATIC.extension, "");
+        this.config = conf;
+
+        if (!load(config)) {
+            NovaStructura.log("Failed to load " + name + " structure config, please check syntax", LogType.ERROR);
+            StructureManager.structureCount--;
+            return;
+        }
+
+        structureList.add(this);
+
+    }
 
     public void paste(@NotNull Location location) {
         //Process offset
@@ -93,11 +119,15 @@ public class Structure {
     }
 
     public boolean naturalDraw(Chunk chunk) {
-        //TODO Luck
+
+        if (Math.random() * outOf <= value) {
+            return true;
+        }
+
         //TODO check biome
         //TODO check block spawn
         //TODO check water or lava lack
-        return true;
+        return false;
     }
 
     public boolean generateFiles(@NotNull WorldEditHandler weh) {
@@ -152,5 +182,87 @@ public class Structure {
         for (Structure structure : structureList)
             if (structure.name.equalsIgnoreCase(name)) return structure;
         return null;
+    }
+
+    public void save(File conf) {
+        try {
+
+            conf.createNewFile();
+
+            FileConfiguration configFile = new YamlConfiguration();
+            configFile.load(conf);
+
+            configFile.set("luck.value", value);
+            configFile.set("luck.outOf", outOf);
+
+            configFile.set("location.worlds", world);
+            configFile.set("location.biomes", biomes);
+            configFile.set("location.offset.x", offsetX);
+            configFile.set("location.offset.y", offsetY);
+            configFile.set("location.offset.z", offsetZ);
+
+            configFile.set("properties.placeAir", placeAir);
+            configFile.set("properties.randomRotation", randomRotation);
+            configFile.set("properties.spawnOnWater", spawnOnWater);
+            configFile.set("properties.spawnOnLava", spawnOnLava);
+            configFile.set("properties.smartPaste", smartPaste);
+            configFile.set("properties.whitelistBlock", whitelistedBlocks);
+
+            configFile.save(conf);
+
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private boolean load(File config) {
+        try {
+
+            FileConfiguration configFile = new YamlConfiguration();
+            configFile.load(config);
+
+            value = configFile.getDouble("luck.value");
+            if (value <= 0) {
+                throw new ConfigParserException("Invalid luck value detected. Must be higher than 0");
+            }
+
+            outOf = configFile.getDouble("luck.outOf");
+            if (outOf <= 0 || outOf < value) {
+                throw new ConfigParserException("Invalid outOf value detected. Must be higher than 0 and higher than luck value");
+            }
+            //world = configFile.getList("location.worlds");
+            //biomes = configFile.getList("location.biomes");
+            offsetX = configFile.getInt("location.offset.x");
+            offsetY = configFile.getInt("location.offset.y");
+            offsetZ = configFile.getInt("location.offset.z");
+
+            placeAir = configFile.getBoolean("properties.placeAir");
+            randomRotation = configFile.getBoolean("properties.randomRotation");
+            spawnOnWater = configFile.getBoolean("properties.spawnOnWater");
+            spawnOnLava = configFile.getBoolean("properties.spawnOnLava");
+            smartPaste = configFile.getBoolean("properties.smartPaste");
+            //whitelistedBlocks = configFile.getList("properties.whitelistBlock");
+            return true;
+
+        } catch (InvalidConfigurationException | IOException | ConfigParserException e) {
+            NovaStructura.log(e.getLocalizedMessage(), LogType.ERROR);
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "§6Name: §8" + name + "\n" +
+                "§6Luck: §8" + value + "/" + outOf + "\n" +
+                "§6OffSet: x=§8" + offsetX + " §6y=§8" + offsetY + " §6z=§8" + offsetZ + "\n" +
+                "§6Worlds: §8" + world + "\n" +
+                "§6Biomes: §8" + biomes + "\n" +
+                "§6PlaceAir: " + (placeAir ? "§a" : "§c") + randomRotation + "\n" +
+                "§6RandomRotation: " + (randomRotation ? "§a" : "§c") + randomRotation + "\n" +
+                "§6SpawnOnLava: " + (spawnOnLava ? "§a" : "§c") + spawnOnLava + "\n" +
+                "§6SpawnOnWater: " + (spawnOnWater ? "§a" : "§c") + spawnOnWater + "\n" +
+                "§6SmartPaste: " + (smartPaste ? "§a" : "§c") + smartPaste + "\n";
     }
 }

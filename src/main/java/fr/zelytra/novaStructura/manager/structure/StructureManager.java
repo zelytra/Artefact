@@ -8,6 +8,7 @@ import java.io.File;
 
 public class StructureManager {
     public static final String PATH = NovaStructura.getInstance().getDataFolder() + File.separator;
+    public static int structureCount = 0;
 
     public StructureManager() {
         folderInit();
@@ -17,17 +18,27 @@ public class StructureManager {
     private void loadStructures() {
         File folder = new File(PATH + StructureFolder.SCHEMATIC);
 
-        int count = 0;
+       structureCount =0;
         Timer timer = new Timer();
 
         NovaStructura.log("Loading structures...", LogType.INFO);
 
         for (File schematic : folder.listFiles()) {
-            new Structure(schematic);
-            count++;
+            String name = schematic.getName().replace(StructureFolder.SCHEMATIC.extension, "");
+            File config = new File(PATH + StructureFolder.CONFIG + name + StructureFolder.CONFIG.extension);
+
+            if (!config.exists()) {
+                NovaStructura.log("No config detected for " + name + " : generating default conf", LogType.WARN);
+                Structure structure = new Structure(schematic);
+                structure.save(config);
+            }else {
+                new Structure(schematic,config);
+            }
+
+            structureCount++;
         }
 
-        NovaStructura.log(count + " structures loaded §8[" + timer.stop() + "]", LogType.INFO);
+        NovaStructura.log(structureCount + " structures loaded §8[" + timer.stop() + "]", LogType.INFO);
     }
 
     private void folderInit() {
