@@ -16,7 +16,6 @@ import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
 import fr.zelytra.novaStructura.manager.worldEdit.WorldEditHandler;
 import fr.zelytra.novaStructura.utils.timer.Timer;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -38,9 +37,9 @@ public class Structure {
     public static List<Structure> structureList = new ArrayList<>();
 
     private String name;
-    private List<String> world;
-    private List<Biome> biomes;
-    private List<Material> whitelistedBlocks;
+    private List<String> worlds = new ArrayList<>();
+    private List<Biome> biomes = new ArrayList<>();
+    private List<Material> whitelistedBlocks = new ArrayList<>();
 
     private File schematic, config;
     private Clipboard clipboard;
@@ -118,14 +117,24 @@ public class Structure {
 
     }
 
-    public boolean naturalDraw(Chunk chunk) {
+    public boolean naturalDraw(Location spawnLocation) {
 
         if (Math.random() * outOf <= value) {
+
+            if (!biomes.isEmpty() && !biomes.contains(spawnLocation.getWorld().getBiome(spawnLocation)))
+                return false;
+
+
+            if (!worlds.isEmpty() && !worlds.contains(spawnLocation.getWorld().getName()))
+                return false;
+
+
+            if (!whitelistedBlocks.isEmpty() && !whitelistedBlocks.contains(spawnLocation.getBlock().getType()))
+                return false;
+
             return true;
         }
 
-        //TODO check biome
-        //TODO check block spawn
         //TODO check water or lava lack
         return false;
     }
@@ -184,7 +193,7 @@ public class Structure {
         return null;
     }
 
-    public void save(File conf) {
+    public void save(@NotNull File conf) {
         try {
 
             conf.createNewFile();
@@ -195,7 +204,7 @@ public class Structure {
             configFile.set("luck.value", value);
             configFile.set("luck.outOf", outOf);
 
-            configFile.set("location.worlds", world);
+            configFile.set("location.worlds", worlds);
             configFile.set("location.biomes", biomes);
             configFile.set("location.offset.x", offsetX);
             configFile.set("location.offset.y", offsetY);
@@ -224,15 +233,15 @@ public class Structure {
             configFile.load(config);
 
             value = configFile.getDouble("luck.value");
-            if (value <= 0) {
+            if (value <= 0)
                 throw new ConfigParserException("Invalid luck value detected. Must be higher than 0");
-            }
+
 
             outOf = configFile.getDouble("luck.outOf");
-            if (outOf <= 0 || outOf < value) {
+            if (outOf <= 0 || outOf < value)
                 throw new ConfigParserException("Invalid outOf value detected. Must be higher than 0 and higher than luck value");
-            }
-            //world = configFile.getList("location.worlds");
+
+            worlds = (List<String>) configFile.getList("location.worlds");
             //biomes = configFile.getList("location.biomes");
             offsetX = configFile.getInt("location.offset.x");
             offsetY = configFile.getInt("location.offset.y");
@@ -257,7 +266,7 @@ public class Structure {
         return "§6Name: §8" + name + "\n" +
                 "§6Luck: §8" + value + "/" + outOf + "\n" +
                 "§6OffSet: x=§8" + offsetX + " §6y=§8" + offsetY + " §6z=§8" + offsetZ + "\n" +
-                "§6Worlds: §8" + world + "\n" +
+                "§6Worlds: §8" + worlds + "\n" +
                 "§6Biomes: §8" + biomes + "\n" +
                 "§6PlaceAir: " + (placeAir ? "§a" : "§c") + randomRotation + "\n" +
                 "§6RandomRotation: " + (randomRotation ? "§a" : "§c") + randomRotation + "\n" +

@@ -14,10 +14,13 @@ public class OnNewChunk implements Listener {
     @EventHandler
     public void onNewChunk(ChunkLoadEvent e) {
         if (!e.isNewChunk()) return;
+        for (Structure structure : Structure.structureList) {
 
-        for (Structure structure : Structure.structureList)
-            if (structure.naturalDraw(e.getChunk()))
-                structure.paste(getRandomLocInChunk(e.getChunk()));
+            Location spawn = getRandomLocInChunk(e.getChunk());
+
+            if (structure.naturalDraw(spawn))
+                structure.paste(spawn);
+        }
 
 
     }
