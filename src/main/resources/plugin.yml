@@ -1,7 +1,7 @@
 name: NovaStructura
 version: '${project.version}'
 main: fr.zelytra.novaStructura.NovaStructura
-api-version: 1.17
+api-version: 1.18
 authors: [ Zelytra ]
 website: https://zelytra.fr
 softdepend:

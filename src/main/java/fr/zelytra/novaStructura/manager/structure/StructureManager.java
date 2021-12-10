@@ -7,11 +7,18 @@ import fr.zelytra.novaStructura.utils.timer.Timer;
 import java.io.File;
 
 public class StructureManager {
+
     public static final String PATH = NovaStructura.getInstance().getDataFolder() + File.separator;
     public static int structureCount = 0;
 
     public StructureManager() {
         folderInit();
+        NovaStructura.log("Loading structures...", LogType.INFO);
+        loadStructures();
+    }
+
+    public void reload(){
+        NovaStructura.log("Reloading structures...", LogType.INFO);
         loadStructures();
     }
 
@@ -21,7 +28,7 @@ public class StructureManager {
        structureCount =0;
         Timer timer = new Timer();
 
-        NovaStructura.log("Loading structures...", LogType.INFO);
+
 
         for (File schematic : folder.listFiles()) {
             String name = schematic.getName().replace(StructureFolder.SCHEMATIC.extension, "");
@@ -30,7 +37,7 @@ public class StructureManager {
             if (!config.exists()) {
                 NovaStructura.log("No config detected for " + name + " : generating default conf", LogType.WARN);
                 Structure structure = new Structure(schematic);
-                structure.save(config);
+                structure.save();
             }else {
                 new Structure(schematic,config);
             }

@@ -2,9 +2,11 @@ package fr.zelytra.novaStructura;
 
 import fr.zelytra.novaStructura.commands.Test;
 import fr.zelytra.novaStructura.commands.structure.StructureCommand;
+import fr.zelytra.novaStructura.commands.structure.TabCommands;
 import fr.zelytra.novaStructura.events.EventManager;
 import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.logs.Logs;
+import fr.zelytra.novaStructura.manager.structure.Structure;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
 import fr.zelytra.novaStructura.utils.Message;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,12 +42,16 @@ public final class NovaStructura extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        for (Structure structure : Structure.structureList){
+            structure.save();
+        }
     }
 
     private void regCommands() {
         getCommand("test").setExecutor(new Test());
+
         getCommand("novastruct").setExecutor(new StructureCommand());
+        getCommand("novastruct").setTabCompleter(new TabCommands());
     }
 
     public static void log(String msg, LogType type) {

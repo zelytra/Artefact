@@ -1,5 +1,6 @@
 package fr.zelytra.novaStructura.commands.structure;
 
+import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.structure.Structure;
 import fr.zelytra.novaStructura.manager.worldEdit.WorldEditHandler;
 import fr.zelytra.novaStructura.utils.Message;
@@ -20,6 +21,11 @@ public class StructureCommand implements CommandExecutor {
         if (args.length > 0) {
 
             if (args[0].equalsIgnoreCase("create") && args.length == 2) {
+
+                if (Structure.exist(args[1])) {
+                    player.sendMessage(Message.PLAYER_PREFIX + "§cA structure already have this name. Please choose another");
+                    return true;
+                }
 
                 WorldEditHandler weh = new WorldEditHandler(player);
                 Structure structure = new Structure(args[1]);
@@ -42,12 +48,32 @@ public class StructureCommand implements CommandExecutor {
 
 
             } else if (args[0].equalsIgnoreCase("delete")) {
+                Structure structure = Structure.getStructure(args[1]);
 
+                if (structure == null) {
+                    player.sendMessage(Message.PLAYER_PREFIX + "§cAny structure with this name found");
+                    return true;
+                }
+
+                structure.delete();
+                player.sendMessage(Message.PLAYER_PREFIX + "§6Structure delete");
+                return true;
+
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                player.sendMessage(Message.PLAYER_PREFIX + "§6Reloading structures...");
+                NovaStructura.structureManager.reload();
+                player.sendMessage(Message.PLAYER_PREFIX + "§6Structure loaded !");
                 return true;
 
             } else if (args[0].equalsIgnoreCase("info") && args.length == 2) {
 
                 Structure structure = Structure.getStructure(args[1]);
+
+                if (structure == null) {
+                    player.sendMessage(Message.PLAYER_PREFIX + "§cAny structure with this name found");
+                    return true;
+                }
+
                 player.sendMessage(structure.toString());
                 return true;
 

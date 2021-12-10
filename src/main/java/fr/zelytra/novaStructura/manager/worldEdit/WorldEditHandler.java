@@ -111,7 +111,7 @@ public class WorldEditHandler {
         try {
             region = WorldEdit.getInstance().getSessionManager().findByName(WEp.getSessionKey().getName()).getSelection(world);
         } catch (IncompleteRegionException e) {
-
+            return null;
         }
         return region;
     }

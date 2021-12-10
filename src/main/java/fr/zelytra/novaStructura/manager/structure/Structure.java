@@ -53,32 +53,35 @@ public class Structure {
     public Structure(String name) {
         this.name = name;
         structureList.add(this);
+        this.config = save();
     }
 
     public Structure(File schematic) {
-
+        this.schematic = schematic;
         try {
             ClipboardFormat format = ClipboardFormats.findByFile(schematic);
             ClipboardReader reader = format.getReader(new FileInputStream(schematic));
 
             this.clipboard = reader.read();
         } catch (IOException e) {
-            NovaStructura.log("Failed to read schamtic: " + name, LogType.ERROR);
+            NovaStructura.log("Failed to read schematic: " + name, LogType.ERROR);
             return;
         }
 
         this.name = schematic.getName().replace(StructureFolder.SCHEMATIC.extension, "");
         structureList.add(this);
+        this.config = save();
 
     }
 
     public Structure(File schematic, File conf) {
-
+        this.schematic = schematic;
         try {
             ClipboardFormat format = ClipboardFormats.findByFile(schematic);
             ClipboardReader reader = format.getReader(new FileInputStream(schematic));
 
             this.clipboard = reader.read();
+            reader.close();
         } catch (IOException e) {
             NovaStructura.log("Failed to read schematic: " + name, LogType.ERROR);
             return;
@@ -114,6 +117,7 @@ public class Structure {
                     " y: " + location.getBlockY() +
                     " z: " + location.getBlockZ() +
                     " §8[" + timer.stop() + "]", LogType.INFO);
+
 
     }
 
@@ -162,7 +166,7 @@ public class Structure {
         }
         this.clipboard = clipboard;
 
-        schematic = new File(StructureManager.PATH + StructureFolder.SCHEMATIC + this.name + ".struct");
+        schematic = new File(StructureManager.PATH + StructureFolder.SCHEMATIC + this.name + StructureFolder.SCHEMATIC.extension);
 
         if (!schematic.exists()) {
             try {
@@ -193,9 +197,10 @@ public class Structure {
         return null;
     }
 
-    public void save(@NotNull File conf) {
-        try {
+    public File save() {
 
+        try {
+            File conf = new File(StructureManager.PATH + StructureFolder.CONFIG + this.name + StructureFolder.CONFIG.extension);
             conf.createNewFile();
 
             FileConfiguration configFile = new YamlConfiguration();
@@ -218,11 +223,11 @@ public class Structure {
             configFile.set("properties.whitelistBlock", whitelistedBlocks);
 
             configFile.save(conf);
-
+            return conf;
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-
+        return null;
 
     }
 
@@ -263,15 +268,29 @@ public class Structure {
 
     @Override
     public String toString() {
-        return "§6Name: §8" + name + "\n" +
-                "§6Luck: §8" + value + "/" + outOf + "\n" +
-                "§6OffSet: x=§8" + offsetX + " §6y=§8" + offsetY + " §6z=§8" + offsetZ + "\n" +
-                "§6Worlds: §8" + worlds + "\n" +
-                "§6Biomes: §8" + biomes + "\n" +
-                "§6PlaceAir: " + (placeAir ? "§a" : "§c") + randomRotation + "\n" +
-                "§6RandomRotation: " + (randomRotation ? "§a" : "§c") + randomRotation + "\n" +
-                "§6SpawnOnLava: " + (spawnOnLava ? "§a" : "§c") + spawnOnLava + "\n" +
-                "§6SpawnOnWater: " + (spawnOnWater ? "§a" : "§c") + spawnOnWater + "\n" +
-                "§6SmartPaste: " + (smartPaste ? "§a" : "§c") + smartPaste + "\n";
+        return "§8---------------§6 [ Structure Data ] §8---------------" + "\n" +
+                "§8⬤ §6Name: §8" + name + "\n" +
+                "§8⬤ §6Luck: §8" + value + "/" + outOf + "\n" +
+                "§8⬤ §6OffSet: x=§8" + offsetX + " §6y=§8" + offsetY + " §6z=§8" + offsetZ + "\n" +
+                "§8⬤ §6Worlds: §8" + worlds + "\n" +
+                "§8⬤ §6Biomes: §8" + biomes + "\n" +
+                "§8⬤ §6PlaceAir: " + (placeAir ? "§a" : "§c") + randomRotation + "\n" +
+                "§8⬤ §6RandomRotation: " + (randomRotation ? "§a" : "§c") + randomRotation + "\n" +
+                "§8⬤ §6SpawnOnLava: " + (spawnOnLava ? "§a" : "§c") + spawnOnLava + "\n" +
+                "§8⬤ §6SpawnOnWater: " + (spawnOnWater ? "§a" : "§c") + spawnOnWater + "\n" +
+                "§8⬤ §6SmartPaste: " + (smartPaste ? "§a" : "§c") + smartPaste + "\n";
+    }
+
+    public static boolean exist(String name) {
+        for (Structure structure : structureList)
+            if (structure.name.equalsIgnoreCase(name))
+                return true;
+        return false;
+    }
+
+    public void delete() {
+        config.delete();
+        schematic.delete();
+        structureList.remove(this);
     }
 }
