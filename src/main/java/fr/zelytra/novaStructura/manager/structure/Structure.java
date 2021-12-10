@@ -47,7 +47,7 @@ public class Structure {
     private int offsetX = 0, offsetY = 0, offsetZ = 0;
     private double value = 1, outOf = 500;
     private int minHeight = 0, maxHeight = 255;
-    private boolean placeAir = true, randomRotation = true, spawnOnWater = false, spawnOnLava = false;
+    private boolean placeAir = true, randomRotation = true, spawnOnWater = false, spawnOnLava = false, spawnInCave = false;
     private boolean smartPaste = false;
 
     public Structure(String name) {
@@ -190,6 +190,26 @@ public class Structure {
         return name;
     }
 
+    public int getMinHeight() {
+        return minHeight;
+    }
+
+    public int getMaxHeight() {
+        return maxHeight;
+    }
+
+    public boolean isSpawnOnWater() {
+        return spawnOnWater;
+    }
+
+    public boolean isSpawnOnLava() {
+        return spawnOnLava;
+    }
+
+    public boolean isSpawnInCave() {
+        return spawnInCave;
+    }
+
     @Nullable
     public static Structure getStructure(String name) {
         for (Structure structure : structureList)
@@ -214,11 +234,14 @@ public class Structure {
             configFile.set("location.offset.x", offsetX);
             configFile.set("location.offset.y", offsetY);
             configFile.set("location.offset.z", offsetZ);
+            configFile.set("location.minHeight", minHeight);
+            configFile.set("location.maxHeight", maxHeight);
 
             configFile.set("properties.placeAir", placeAir);
             configFile.set("properties.randomRotation", randomRotation);
             configFile.set("properties.spawnOnWater", spawnOnWater);
             configFile.set("properties.spawnOnLava", spawnOnLava);
+            configFile.set("properties.spawnInCave", spawnInCave);
             configFile.set("properties.smartPaste", smartPaste);
             configFile.set("properties.whitelistBlock", whitelistedBlocks);
 
@@ -251,11 +274,14 @@ public class Structure {
             offsetX = configFile.getInt("location.offset.x");
             offsetY = configFile.getInt("location.offset.y");
             offsetZ = configFile.getInt("location.offset.z");
+            minHeight = configFile.getInt("location.minHeight");
+            maxHeight = configFile.getInt("location.maxHeight");
 
             placeAir = configFile.getBoolean("properties.placeAir");
             randomRotation = configFile.getBoolean("properties.randomRotation");
             spawnOnWater = configFile.getBoolean("properties.spawnOnWater");
             spawnOnLava = configFile.getBoolean("properties.spawnOnLava");
+            spawnInCave = configFile.getBoolean("properties.spawnInCave");
             smartPaste = configFile.getBoolean("properties.smartPaste");
             //whitelistedBlocks = configFile.getList("properties.whitelistBlock");
             return true;
@@ -272,12 +298,14 @@ public class Structure {
                 "§8⬤ §6Name: §8" + name + "\n" +
                 "§8⬤ §6Luck: §8" + value + "/" + outOf + "\n" +
                 "§8⬤ §6OffSet: x=§8" + offsetX + " §6y=§8" + offsetY + " §6z=§8" + offsetZ + "\n" +
+                "§8⬤ §6Height: Ymax=§8" + maxHeight + " §6Ymin=§8" + minHeight + "\n" +
                 "§8⬤ §6Worlds: §8" + worlds + "\n" +
                 "§8⬤ §6Biomes: §8" + biomes + "\n" +
                 "§8⬤ §6PlaceAir: " + (placeAir ? "§a" : "§c") + randomRotation + "\n" +
                 "§8⬤ §6RandomRotation: " + (randomRotation ? "§a" : "§c") + randomRotation + "\n" +
                 "§8⬤ §6SpawnOnLava: " + (spawnOnLava ? "§a" : "§c") + spawnOnLava + "\n" +
                 "§8⬤ §6SpawnOnWater: " + (spawnOnWater ? "§a" : "§c") + spawnOnWater + "\n" +
+                "§8⬤ §6SpawnInCave: " + (spawnInCave ? "§a" : "§c") + spawnInCave + "\n" +
                 "§8⬤ §6SmartPaste: " + (smartPaste ? "§a" : "§c") + smartPaste + "\n";
     }
 
