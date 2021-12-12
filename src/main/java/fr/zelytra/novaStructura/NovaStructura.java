@@ -6,7 +6,7 @@ import fr.zelytra.novaStructura.commands.structure.TabCommands;
 import fr.zelytra.novaStructura.events.EventManager;
 import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.logs.Logs;
-import fr.zelytra.novaStructura.manager.structure.Structure;
+import fr.zelytra.novaStructura.manager.schematic.wordload.WorkloadThread;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
 import fr.zelytra.novaStructura.utils.Message;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +21,7 @@ public final class NovaStructura extends JavaPlugin {
     public static boolean isReloading = false;
 
     public static StructureManager structureManager;
+    public static WorkloadThread workloadThread;
 
     @Override
     public void onLoad() {
@@ -36,15 +37,15 @@ public final class NovaStructura extends JavaPlugin {
         isReloading = false;
         logs = new Logs();
         structureManager = new StructureManager();
+        workloadThread = new WorkloadThread();
+        workloadThread.run();
 
         log("Started and ready to generate !", LogType.INFO);
     }
 
     @Override
     public void onDisable() {
-        for (Structure structure : Structure.structureList){
-            structure.save();
-        }
+
     }
 
     private void regCommands() {

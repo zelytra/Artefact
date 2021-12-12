@@ -1,20 +1,12 @@
 package fr.zelytra.novaStructura.manager.structure;
 
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.*;
-import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
-import com.sk89q.worldedit.function.operation.Operations;
-import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.World;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.logs.LogType;
+import fr.zelytra.novaStructura.manager.schematic.Schematic;
 import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
-import fr.zelytra.novaStructura.manager.worldEdit.WorldEditHandler;
 import fr.zelytra.novaStructura.utils.timer.Timer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +32,8 @@ public class Structure {
     private List<Biome> biomes = new ArrayList<>();
     private List<Material> whitelistedBlocks = new ArrayList<>();
 
-    private File schematic, config;
-    private Clipboard clipboard;
+    private File schematicFile, config;
+    private Schematic schematic;
 
     private int offsetX = 0, offsetY = 0, offsetZ = 0;
     private double value = 1, outOf = 500;
@@ -50,23 +41,16 @@ public class Structure {
     private boolean placeAir = true, randomRotation = true, spawnOnWater = false, spawnOnLava = false, spawnInCave = false;
     private boolean smartPaste = false;
 
-    public Structure(String name) {
+    public Structure(Schematic schematic, String name) {
+        this.schematic = schematic;
         this.name = name;
         structureList.add(this);
         this.config = save();
     }
 
     public Structure(File schematic) {
-        this.schematic = schematic;
-        try {
-            ClipboardFormat format = ClipboardFormats.findByFile(schematic);
-            ClipboardReader reader = format.getReader(new FileInputStream(schematic));
+        this.schematicFile = schematic;
 
-            this.clipboard = reader.read();
-        } catch (IOException e) {
-            NovaStructura.log("Failed to read schematic: " + name, LogType.ERROR);
-            return;
-        }
 
         this.name = schematic.getName().replace(StructureFolder.SCHEMATIC.extension, "");
         structureList.add(this);
@@ -75,12 +59,12 @@ public class Structure {
     }
 
     public Structure(File schematic, File conf) {
-        this.schematic = schematic;
+        this.schematicFile = schematic;
         try {
             ClipboardFormat format = ClipboardFormats.findByFile(schematic);
             ClipboardReader reader = format.getReader(new FileInputStream(schematic));
 
-            this.clipboard = reader.read();
+            //this.clipboard = reader.read();
             reader.close();
         } catch (IOException e) {
             NovaStructura.log("Failed to read schematic: " + name, LogType.ERROR);
@@ -106,11 +90,9 @@ public class Structure {
         location.setY(location.getY() + offsetY);
         location.setX(location.getX() + offsetX);
 
-        //WE Pasting
-        WorldEditHandler pasteWE = new WorldEditHandler(location, clipboard);
-        Timer timer = new Timer();
-        pasteWE.pasteStructure();
 
+        Timer timer = new Timer();
+        schematic.paste(location);
         if (NovaStructura.debugMod)
             NovaStructura.log("Structure: " + name +
                     " | x: " + location.getBlockX() +
@@ -141,49 +123,6 @@ public class Structure {
 
         //TODO check water or lava lack
         return false;
-    }
-
-    public boolean generateFiles(@NotNull WorldEditHandler weh) {
-
-        Region region;
-        World world = BukkitAdapter.adapt(weh.getWorld());
-
-        //Getting player selection
-        region = weh.getSelection();
-
-        if (region == null)
-            return false;
-
-
-        //Saving selection into clipboard
-        BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
-        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1)) {
-            ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
-            Operations.complete(forwardExtentCopy);
-        } catch (WorldEditException e) {
-            return false;
-
-        }
-        this.clipboard = clipboard;
-
-        schematic = new File(StructureManager.PATH + StructureFolder.SCHEMATIC + this.name + StructureFolder.SCHEMATIC.extension);
-
-        if (!schematic.exists()) {
-            try {
-                schematic.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        try (ClipboardWriter writer = BuiltInClipboardFormat.SPONGE_SCHEMATIC.getWriter(new FileOutputStream(schematic))) {
-            writer.write(clipboard);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return true;
     }
 
     public String getName() {
@@ -318,7 +257,7 @@ public class Structure {
 
     public void delete() {
         config.delete();
-        schematic.delete();
+        schematicFile.delete();
         structureList.remove(this);
     }
 }

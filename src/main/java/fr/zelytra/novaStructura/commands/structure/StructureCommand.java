@@ -1,9 +1,11 @@
 package fr.zelytra.novaStructura.commands.structure;
 
 import fr.zelytra.novaStructura.NovaStructura;
+import fr.zelytra.novaStructura.manager.schematic.Schematic;
+import fr.zelytra.novaStructura.manager.schematic.selector.Selector;
 import fr.zelytra.novaStructura.manager.structure.Structure;
-import fr.zelytra.novaStructura.manager.worldEdit.WorldEditHandler;
 import fr.zelytra.novaStructura.utils.Message;
+import fr.zelytra.novaStructura.utils.timer.Timer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,11 +29,15 @@ public class StructureCommand implements CommandExecutor {
                     return true;
                 }
 
-                WorldEditHandler weh = new WorldEditHandler(player);
-                Structure structure = new Structure(args[1]);
+                Selector selector = Selector.getPlayerSelection(player);
 
-                if (structure.generateFiles(weh)) {
-                    player.sendMessage(Message.PLAYER_PREFIX + "§6Structure file saved :§9 " + structure.getName() + ".struct");
+                if (selector != null && selector.isValidSelection()) {
+                    Timer timer = new Timer();
+                    Schematic schematic = new Schematic(selector);
+                    Structure structure = new Structure(schematic, args[1]);
+
+                    player.sendMessage(Message.PLAYER_PREFIX + "§6Structure file saved :§9 " + structure.getName() + ".struct §8[" + timer.stop() + "]");
+
                 } else {
                     player.sendMessage(Message.PLAYER_PREFIX + "§cPlease make a selection.");
                 }
