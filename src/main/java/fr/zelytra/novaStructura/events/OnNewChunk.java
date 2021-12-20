@@ -1,7 +1,6 @@
 package fr.zelytra.novaStructura.events;
 
 import fr.zelytra.novaStructura.manager.structure.Structure;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;

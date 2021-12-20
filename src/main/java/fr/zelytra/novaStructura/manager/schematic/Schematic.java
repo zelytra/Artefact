@@ -6,7 +6,6 @@ import fr.zelytra.novaStructura.manager.schematic.wordload.SetBlock;
 import fr.zelytra.novaStructura.manager.schematic.wordload.WorkLoad;
 import fr.zelytra.novaStructura.manager.structure.StructureFolder;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -62,20 +61,20 @@ public class Schematic implements Serializable {
         int maxZ = Math.max(selection.corner1.getBlockZ(), selection.corner2.getBlockZ());
 
         blockMap = new int[maxX - minX + 1][maxY - minY + 1][maxZ - minZ + 1];
-        Bukkit.getScheduler().runTaskAsynchronously(NovaStructura.getInstance(), () -> {
-            for (int x = minX; x <= maxX; x++) {
-                for (int y = minY; y <= maxY; y++) {
-                    for (int z = minZ; z <= maxZ; z++) {
 
-                        Material type = selection.corner1.getWorld().getBlockAt(x, y, z).getType();
-                        blockMap[x - minX][y - minY][z - minZ] = getMaterialId(type);
-                        //NovaStructura.log("x: " + (x - minX) + " y: " + (y - minY) + " z: " + (z - minZ) + " id: " + blockMap[x - minX][y - minY][z - minZ] + " type: " + type.name(), LogType.INFO);
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+
+                    Material type = selection.corner1.getWorld().getBlockAt(x, y, z).getType();
+                    blockMap[x - minX][y - minY][z - minZ] = getMaterialId(type);
+                    //NovaStructura.log("x: " + (x - minX) + " y: " + (y - minY) + " z: " + (z - minZ) + " id: " + blockMap[x - minX][y - minY][z - minZ] + " type: " + type.name(), LogType.INFO);
 
 
-                    }
                 }
             }
-        });
+        }
+
 
     }
 
@@ -100,6 +99,7 @@ public class Schematic implements Serializable {
 
             File schematic = new File(StructureManager.PATH + StructureFolder.SCHEMATIC.folderName + File.separator + name + StructureFolder.SCHEMATIC.extension);
             schematic.createNewFile();
+
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(schematic));
             oos.writeObject(this);
             oos.close();
@@ -115,6 +115,7 @@ public class Schematic implements Serializable {
 
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(schematic));
             Schematic reader = (Schematic) ois.readObject();
+
             ois.close();
             return reader;
 
