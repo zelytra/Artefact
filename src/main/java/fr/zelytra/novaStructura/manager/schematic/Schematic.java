@@ -4,10 +4,12 @@ import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.schematic.selector.Selector;
 import fr.zelytra.novaStructura.manager.schematic.wordload.SetBlock;
 import fr.zelytra.novaStructura.manager.schematic.wordload.WorkLoad;
+import fr.zelytra.novaStructura.manager.structure.Structure;
 import fr.zelytra.novaStructura.manager.structure.StructureFolder;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,9 +18,9 @@ import java.util.List;
 public class Schematic implements Serializable {
 
 
-    private List<MaterialMap> materialMaps;
-    private int[][][] blockMap;
-    private String name;
+    private final List<MaterialMap> materialMaps;
+    private SchematicBlock[][][] blockMap;
+    private final String name;
 
     public Schematic(Selector selection, String name) {
 
@@ -28,22 +30,27 @@ public class Schematic implements Serializable {
 
     }
 
-    public void paste(Location location) {
-        NovaStructura.workloadThread.addAllLoad(generateWorkLoad(location));
+    public void paste(Location location, Structure structure) {
+        NovaStructura.workloadThread.addAllLoad(generateWorkLoad(location, structure));
     }
 
-    private List<WorkLoad> generateWorkLoad(Location location) {
+    private List<WorkLoad> generateWorkLoad(Location location, Structure structure) {
         List<WorkLoad> setBlockList = new ArrayList<>();
 
         for (int x = 0; x < blockMap.length; x++) {
             for (int y = 0; y < blockMap[x].length; y++) {
                 for (int z = 0; z < blockMap[x][y].length; z++) {
 
+                    Material material = Material.getMaterial(materialMaps.get(blockMap[x][y][z].materialId()).materialName());
+
+                    if (structure.isPlaceAir() && material == Material.AIR) continue;
+
                     setBlockList.add(new SetBlock(location.getWorld(),
                             location.getBlockX() + x,
                             location.getBlockY() + y,
                             location.getBlockZ() + z,
-                            Material.getMaterial(materialMaps.get(blockMap[x][y][z]).materialName())));
+                            material,
+                            blockMap[x][y][z].data()));
 
                 }
             }
@@ -60,16 +67,15 @@ public class Schematic implements Serializable {
         int maxY = Math.max(selection.corner1.getBlockY(), selection.corner2.getBlockY());
         int maxZ = Math.max(selection.corner1.getBlockZ(), selection.corner2.getBlockZ());
 
-        blockMap = new int[maxX - minX + 1][maxY - minY + 1][maxZ - minZ + 1];
+        blockMap = new SchematicBlock[maxX - minX + 1][maxY - minY + 1][maxZ - minZ + 1];
 
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
-
-                    Material type = selection.corner1.getWorld().getBlockAt(x, y, z).getType();
-                    blockMap[x - minX][y - minY][z - minZ] = getMaterialId(type);
-                    //NovaStructura.log("x: " + (x - minX) + " y: " + (y - minY) + " z: " + (z - minZ) + " id: " + blockMap[x - minX][y - minY][z - minZ] + " type: " + type.name(), LogType.INFO);
-
+                    Block block = selection.corner1.getWorld().getBlockAt(x, y, z);
+                    blockMap[x - minX][y - minY][z - minZ] = new SchematicBlock(getMaterialId(block.getType()), block.getBlockData().getAsString());
+                    //TODO Optimization of this method in async
+                    //TODO Handle loading of block data only on load and not at each paste
 
                 }
             }

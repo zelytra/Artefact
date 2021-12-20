@@ -28,6 +28,7 @@ public class Structure {
     private List<Biome> biomes = new ArrayList<>();
     private List<Material> whitelistedBlocks = new ArrayList<>();
 
+
     private File config;
     private Schematic schematic;
 
@@ -74,6 +75,7 @@ public class Structure {
     }
 
     public void paste(@NotNull Location location) {
+
         //Process offset
         location.setZ(location.getZ() + offsetZ);
         location.setY(location.getY() + offsetY);
@@ -81,7 +83,7 @@ public class Structure {
 
 
         Timer timer = new Timer();
-        schematic.paste(location);
+        schematic.paste(location, this);
 
         if (NovaStructura.debugMod)
             NovaStructura.log("Structure: " + name +
@@ -121,6 +123,18 @@ public class Structure {
 
     public int getMinHeight() {
         return minHeight;
+    }
+
+    public static List<Structure> getStructureList() {
+        return structureList;
+    }
+
+    public boolean isPlaceAir() {
+        return placeAir;
+    }
+
+    public boolean isRandomRotation() {
+        return randomRotation;
     }
 
     public int getMaxHeight() {
