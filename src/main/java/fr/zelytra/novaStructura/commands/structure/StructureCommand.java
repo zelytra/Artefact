@@ -33,7 +33,7 @@ public class StructureCommand implements CommandExecutor {
 
                 if (selector != null && selector.isValidSelection()) {
                     Timer timer = new Timer();
-                    Schematic schematic = new Schematic(selector);
+                    Schematic schematic = new Schematic(selector,args[1]);
                     Structure structure = new Structure(schematic, args[1]);
 
                     player.sendMessage(Message.PLAYER_PREFIX + "§6Structure file saved :§9 " + structure.getName() + ".struct §8[" + timer.stop() + "]");

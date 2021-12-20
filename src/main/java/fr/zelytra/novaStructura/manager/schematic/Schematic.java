@@ -4,11 +4,13 @@ import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.schematic.selector.Selector;
 import fr.zelytra.novaStructura.manager.schematic.wordload.SetBlock;
 import fr.zelytra.novaStructura.manager.schematic.wordload.WorkLoad;
+import fr.zelytra.novaStructura.manager.structure.StructureFolder;
+import fr.zelytra.novaStructura.manager.structure.StructureManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +19,11 @@ public class Schematic implements Serializable {
 
     private List<MaterialMap> materialMaps;
     private int[][][] blockMap;
+    private String name;
 
-    public Schematic(Selector selection) {
+    public Schematic(Selector selection, String name) {
 
+        this.name = name;
         materialMaps = new ArrayList<>();
         scanSelection(selection);
 
@@ -87,6 +91,43 @@ public class Schematic implements Serializable {
 
         materialMaps.add(new MaterialMap(material.name(), id));
         return id;
+
+    }
+
+    public void save() {
+
+        try {
+
+            File schematic = new File(StructureManager.PATH + StructureFolder.SCHEMATIC.folderName + File.separator + name + StructureFolder.SCHEMATIC.extension);
+            schematic.createNewFile();
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(schematic));
+            oos.writeObject(this);
+            oos.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static Schematic loadFromFile(File schematic) {
+        try {
+
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(schematic));
+            Schematic reader = (Schematic) ois.readObject();
+            ois.close();
+            return reader;
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void delete() {
+
+        File schematic = new File(StructureManager.PATH + StructureFolder.SCHEMATIC.folderName + File.separator + name + StructureFolder.SCHEMATIC.extension);
+        schematic.delete();
 
     }
 }

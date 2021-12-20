@@ -9,7 +9,7 @@ import java.util.List;
 
 public class WorkloadThread implements Runnable {
 
-    private static final int MAX_MS_PER_TICK = 45;
+    private static final int MAX_MS_PER_TICK = 30;
     private final ArrayDeque<WorkLoad> workloadDeque;
 
     public WorkloadThread() {

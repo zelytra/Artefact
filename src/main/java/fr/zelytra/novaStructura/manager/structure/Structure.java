@@ -1,8 +1,5 @@
 package fr.zelytra.novaStructura.manager.structure;
 
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.schematic.Schematic;
@@ -18,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +28,7 @@ public class Structure {
     private List<Biome> biomes = new ArrayList<>();
     private List<Material> whitelistedBlocks = new ArrayList<>();
 
-    private File schematicFile, config;
+    private File config;
     private Schematic schematic;
 
     private int offsetX = 0, offsetY = 0, offsetZ = 0;
@@ -42,16 +38,19 @@ public class Structure {
     private boolean smartPaste = false;
 
     public Structure(Schematic schematic, String name) {
+
         this.schematic = schematic;
         this.name = name;
-        structureList.add(this);
         this.config = save();
+
+        schematic.save();
+        structureList.add(this);
+
     }
 
     public Structure(File schematic) {
-        this.schematicFile = schematic;
 
-
+        this.schematic = Schematic.loadFromFile(schematic);
         this.name = schematic.getName().replace(StructureFolder.SCHEMATIC.extension, "");
         structureList.add(this);
         this.config = save();
@@ -59,18 +58,8 @@ public class Structure {
     }
 
     public Structure(File schematic, File conf) {
-        this.schematicFile = schematic;
-        try {
-            ClipboardFormat format = ClipboardFormats.findByFile(schematic);
-            ClipboardReader reader = format.getReader(new FileInputStream(schematic));
 
-            //this.clipboard = reader.read();
-            reader.close();
-        } catch (IOException e) {
-            NovaStructura.log("Failed to read schematic: " + name, LogType.ERROR);
-            return;
-        }
-
+        this.schematic = Schematic.loadFromFile(schematic);
         this.name = schematic.getName().replace(StructureFolder.SCHEMATIC.extension, "");
         this.config = conf;
 
@@ -93,6 +82,7 @@ public class Structure {
 
         Timer timer = new Timer();
         schematic.paste(location);
+
         if (NovaStructura.debugMod)
             NovaStructura.log("Structure: " + name +
                     " | x: " + location.getBlockX() +
@@ -257,7 +247,7 @@ public class Structure {
 
     public void delete() {
         config.delete();
-        schematicFile.delete();
+        schematic.delete();
         structureList.remove(this);
     }
 }

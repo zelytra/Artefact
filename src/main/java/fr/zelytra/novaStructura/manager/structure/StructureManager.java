@@ -15,7 +15,7 @@ public class StructureManager {
     public StructureManager() {
         folderInit();
         NovaStructura.log("Loading structures...", LogType.INFO);
-        //loadStructures();
+        loadStructures();
     }
 
     public void reload() {
