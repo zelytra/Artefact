@@ -23,6 +23,7 @@ public class TabCommands implements TabCompleter {
             commandsList.add("delete");
             commandsList.add("spawn");
             commandsList.add("reload");
+            commandsList.add("wand");
             commandsList = Utils.dynamicTab(commandsList, args[0]);
 
             return commandsList;

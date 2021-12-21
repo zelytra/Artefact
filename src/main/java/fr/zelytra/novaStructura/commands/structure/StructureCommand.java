@@ -7,10 +7,12 @@ import fr.zelytra.novaStructura.manager.structure.Structure;
 import fr.zelytra.novaStructura.utils.Message;
 import fr.zelytra.novaStructura.utils.timer.Timer;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class StructureCommand implements CommandExecutor {
@@ -20,6 +22,11 @@ public class StructureCommand implements CommandExecutor {
         if (!(sender instanceof Player)) return false;
 
         Player player = (Player) sender;
+
+        if (!player.isOp()){
+            player.sendMessage(Message.PLAYER_PREFIX + "§cYou don't have permission to perform this command");
+            return true;
+        }
 
         if (args.length > 0) {
 
@@ -88,6 +95,10 @@ public class StructureCommand implements CommandExecutor {
                 player.sendMessage(structure.toString());
                 return true;
 
+            } else if (args[0].equalsIgnoreCase("wand")) {
+
+                player.getInventory().addItem(new ItemStack(Material.FEATHER));
+                return true;
             } else {
 
                 player.sendMessage(Message.PLAYER_PREFIX + "§cWrong argument");

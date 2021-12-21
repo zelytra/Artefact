@@ -8,11 +8,11 @@ website: https://zelytra.fr
 commands:
 
   test:
-    permission: novaStructure.test
+    permission: novaStructure
     description: Something can went wrong...
 
   novastruct:
-    permission: novaStructure.struct
+    permission: novaStructure
     description: Structure commands handler
     aliases:
       - ns
