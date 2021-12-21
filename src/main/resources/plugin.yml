@@ -4,8 +4,6 @@ main: fr.zelytra.novaStructura.NovaStructura
 api-version: 1.18
 authors: [ Zelytra ]
 website: https://zelytra.fr
-softdepend:
-  - WorldEdit
 
 commands:
 

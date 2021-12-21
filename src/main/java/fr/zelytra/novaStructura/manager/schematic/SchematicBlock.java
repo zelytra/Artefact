@@ -26,10 +26,6 @@ public class SchematicBlock implements Serializable {
         return data != null;
     }
 
-    public String getData() {
-        return data;
-    }
-
     public int getMaterialId() {
         return materialId;
     }

@@ -6,7 +6,7 @@ import fr.zelytra.novaStructura.commands.structure.TabCommands;
 import fr.zelytra.novaStructura.events.EventManager;
 import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.logs.Logs;
-import fr.zelytra.novaStructura.manager.schematic.wordload.WorkloadThread;
+import fr.zelytra.novaStructura.manager.schematic.workload.WorkloadThread;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
 import fr.zelytra.novaStructura.utils.Message;
 import org.bukkit.plugin.java.JavaPlugin;

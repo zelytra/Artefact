@@ -1,4 +1,4 @@
-package fr.zelytra.novaStructura.manager.schematic.wordload;
+package fr.zelytra.novaStructura.manager.schematic.workload;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -25,6 +25,7 @@ public class SetBlock implements WorkLoad {
     public void compute() {
         Block block = world.getBlockAt(x, y, z);
         block.setType(material);
+
         if (data != null)
             block.setBlockData(data);
     }

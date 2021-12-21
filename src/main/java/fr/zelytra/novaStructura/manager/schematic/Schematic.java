@@ -2,8 +2,8 @@ package fr.zelytra.novaStructura.manager.schematic;
 
 import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.schematic.selector.Selector;
-import fr.zelytra.novaStructura.manager.schematic.wordload.SetBlock;
-import fr.zelytra.novaStructura.manager.schematic.wordload.WorkLoad;
+import fr.zelytra.novaStructura.manager.schematic.workload.SetBlock;
+import fr.zelytra.novaStructura.manager.schematic.workload.WorkLoad;
 import fr.zelytra.novaStructura.manager.structure.Structure;
 import fr.zelytra.novaStructura.manager.structure.StructureFolder;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
