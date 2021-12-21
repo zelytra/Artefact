@@ -35,7 +35,7 @@ public class WorkloadThread implements Runnable {
                 SetBlock block = (SetBlock) workloadDeque.poll();
                 block.compute();
             }
-        }, 0, 20);
+        }, 0, 2 );
 
     }
 

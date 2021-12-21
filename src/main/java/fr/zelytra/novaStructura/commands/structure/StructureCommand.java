@@ -6,6 +6,7 @@ import fr.zelytra.novaStructura.manager.schematic.selector.Selector;
 import fr.zelytra.novaStructura.manager.structure.Structure;
 import fr.zelytra.novaStructura.utils.Message;
 import fr.zelytra.novaStructura.utils.timer.Timer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,19 +29,23 @@ public class StructureCommand implements CommandExecutor {
                     player.sendMessage(Message.PLAYER_PREFIX + "§cA structure already have this name. Please choose another");
                     return true;
                 }
+                Bukkit.getScheduler().runTaskAsynchronously(NovaStructura.getInstance(), () -> {
 
-                Selector selector = Selector.getPlayerSelection(player);
+                    Selector selector = Selector.getPlayerSelection(player);
 
-                if (selector != null && selector.isValidSelection()) {
-                    Timer timer = new Timer();
-                    Schematic schematic = new Schematic(selector,args[1]);
-                    Structure structure = new Structure(schematic, args[1]);
+                    if (selector != null && selector.isValidSelection()) {
+                        Timer timer = new Timer();
+                        Schematic schematic = new Schematic(selector, args[1]);
+                        Structure structure = new Structure(schematic, args[1]);
 
-                    player.sendMessage(Message.PLAYER_PREFIX + "§6Structure file saved :§9 " + structure.getName() + ".struct §8[" + timer.stop() + "]");
+                        player.sendMessage(Message.PLAYER_PREFIX + "§6Structure file saved :§9 " + structure.getName() + ".struct §8[" + timer.stop() + "]");
 
-                } else {
-                    player.sendMessage(Message.PLAYER_PREFIX + "§cPlease make a selection.");
-                }
+                    } else {
+                        player.sendMessage(Message.PLAYER_PREFIX + "§cPlease make a selection.");
+                    }
+
+                });
+
                 return true;
 
 

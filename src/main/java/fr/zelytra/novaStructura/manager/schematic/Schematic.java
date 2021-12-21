@@ -41,7 +41,7 @@ public class Schematic implements Serializable {
             for (int y = 0; y < blockMap[x].length; y++) {
                 for (int z = 0; z < blockMap[x][y].length; z++) {
 
-                    Material material = Material.getMaterial(materialMaps.get(blockMap[x][y][z].materialId()).materialName());
+                    Material material = Material.getMaterial(materialMaps.get(blockMap[x][y][z].getMaterialId()).materialName());
 
                     if (structure.isPlaceAir() && material == Material.AIR) continue;
 
@@ -50,7 +50,7 @@ public class Schematic implements Serializable {
                             location.getBlockY() + y,
                             location.getBlockZ() + z,
                             material,
-                            blockMap[x][y][z].data()));
+                            (blockMap[x][y][z].hasData() ? blockMap[x][y][z].getBlockData() : null)));
 
                 }
             }
@@ -73,10 +73,7 @@ public class Schematic implements Serializable {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     Block block = selection.corner1.getWorld().getBlockAt(x, y, z);
-                    blockMap[x - minX][y - minY][z - minZ] = new SchematicBlock(getMaterialId(block.getType()), block.getBlockData().getAsString());
-                    //TODO Optimization of this method in async
-                    //TODO Handle loading of block data only on load and not at each paste
-
+                    blockMap[x - minX][y - minY][z - minZ] = new SchematicBlock(getMaterialId(block.getType()), block.getBlockData());
                 }
             }
         }
