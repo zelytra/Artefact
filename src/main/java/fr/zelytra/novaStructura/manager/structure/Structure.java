@@ -2,6 +2,7 @@ package fr.zelytra.novaStructura.manager.structure;
 
 import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.logs.LogType;
+import fr.zelytra.novaStructura.manager.loottable.LootTable;
 import fr.zelytra.novaStructura.manager.schematic.Schematic;
 import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
 import fr.zelytra.novaStructura.utils.timer.Timer;
@@ -31,6 +32,7 @@ public class Structure {
 
     private File config;
     private Schematic schematic;
+    private LootTable lootTable;
 
     private int offsetX = 0, offsetY = 0, offsetZ = 0;
     private double value = 1, outOf = 500;
@@ -188,6 +190,8 @@ public class Structure {
             configFile.set("properties.smartPaste", smartPaste);
             configFile.set("properties.whitelistBlock", whitelistedBlocks);
 
+            configFile.set("lootTable", lootTable.getName());
+
             configFile.save(conf);
             return conf;
         } catch (IOException | InvalidConfigurationException e) {
@@ -226,6 +230,7 @@ public class Structure {
             spawnOnLava = configFile.getBoolean("properties.spawnOnLava");
             spawnInCave = configFile.getBoolean("properties.spawnInCave");
             smartPaste = configFile.getBoolean("properties.smartPaste");
+            lootTable = new LootTable(configFile.getString("lootTable"));
             //whitelistedBlocks = configFile.getList("properties.whitelistBlock");
             return true;
 

@@ -1,0 +1,39 @@
+#Number of random item picked in the list
+draw: 8
+
+item0:
+  material: iron_sword
+  amount : 1
+  luck: 15
+  enchant:
+    enchant0:
+      type: damage_all
+      level: 3
+    enchant1:
+      type: knocback
+      level: 1
+
+item1:
+  material: iron_nugget
+  amount: [1;15]
+  luck: 4
+
+item2:
+  material: diamond_sword
+  amount: 1
+  luck: 0.5
+  enchant:
+    type: damage_all
+    level: [1;5]
+
+item3:
+  material: potion
+  amount : 1
+  luck: 20
+  effect:
+    type: heal
+    duration: 60
+    amplifier: 4
+
+
+
