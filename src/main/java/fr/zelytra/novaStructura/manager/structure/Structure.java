@@ -190,7 +190,7 @@ public class Structure {
             configFile.set("properties.smartPaste", smartPaste);
             configFile.set("properties.whitelistBlock", whitelistedBlocks);
 
-            configFile.set("lootTable", lootTable.getName());
+            configFile.set("lootTable", lootTable != null ? lootTable.getName() : "");
 
             configFile.save(conf);
             return conf;
@@ -208,9 +208,9 @@ public class Structure {
             configFile.load(config);
 
             value = configFile.getDouble("luck.value");
+
             if (value <= 0)
                 throw new ConfigParserException("Invalid luck value detected. Must be higher than 0");
-
 
             outOf = configFile.getDouble("luck.outOf");
             if (outOf <= 0 || outOf < value)
@@ -230,7 +230,12 @@ public class Structure {
             spawnOnLava = configFile.getBoolean("properties.spawnOnLava");
             spawnInCave = configFile.getBoolean("properties.spawnInCave");
             smartPaste = configFile.getBoolean("properties.smartPaste");
-            lootTable = new LootTable(configFile.getString("lootTable"));
+
+            if (!configFile.getString("lootTable").isEmpty() && LootTable.exist(configFile.getString("lootTable")))
+                lootTable = new LootTable(configFile.getString("lootTable"));
+            else if (!configFile.getString("lootTable").isEmpty())
+                NovaStructura.log("Any loottable with this name for structure " + name + ", please check config", LogType.ERROR);
+
             //whitelistedBlocks = configFile.getList("properties.whitelistBlock");
             return true;
 
