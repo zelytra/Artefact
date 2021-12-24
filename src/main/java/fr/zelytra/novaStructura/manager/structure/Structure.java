@@ -67,7 +67,7 @@ public class Structure {
         this.config = conf;
 
         if (!load(config)) {
-            NovaStructura.log("Failed to load " + name + " structure config, please check syntax", LogType.ERROR);
+            NovaStructura.log("[" + name + "] Failed to load structure config, please check syntax", LogType.ERROR);
             StructureManager.structureCount--;
             return;
         }
@@ -234,7 +234,7 @@ public class Structure {
             if (!configFile.getString("lootTable").isEmpty() && LootTable.exist(configFile.getString("lootTable")))
                 lootTable = new LootTable(configFile.getString("lootTable"));
             else if (!configFile.getString("lootTable").isEmpty())
-                NovaStructura.log("Any loottable with this name for structure " + name + ", please check config", LogType.ERROR);
+                NovaStructura.log("[" + name + "] Any loottable with this name, please check config", LogType.ERROR);
 
             //whitelistedBlocks = configFile.getList("properties.whitelistBlock");
             return true;

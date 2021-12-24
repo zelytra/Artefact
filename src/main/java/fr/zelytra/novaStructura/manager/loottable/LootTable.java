@@ -48,7 +48,9 @@ public class LootTable implements Serializable {
 
     private List<Loot> loadFromFile(String name) {
         File pluginFolder = new File(StructureManager.PATH + File.separator + StructureFolder.LOOTS);
-        if (pluginFolder.listFiles().length <= 0) return new ArrayList<>();
+        List<Loot> loots = new ArrayList<>();
+
+        if (pluginFolder.listFiles().length <= 0) return loots;
 
         try {
             for (File file : pluginFolder.listFiles()) {
@@ -58,6 +60,8 @@ public class LootTable implements Serializable {
                     configFile.load(file);
 
                     for (String itemTag : configFile.getKeys(false)) {
+
+                        if (itemTag.equalsIgnoreCase("draw")) continue;
 
                         StringItem item = new StringItem(configFile.getString(itemTag + LootConf.SEPARATOR + LootConf.MATERIAL),
                                 configFile.getInt(itemTag + LootConf.SEPARATOR + LootConf.AMOUNT));
@@ -79,10 +83,10 @@ public class LootTable implements Serializable {
                             parser = new ItemParser(item,
                                     configFile.getInt(itemTag + LootConf.SEPARATOR + LootConf.LUCK));
 
-                        if (parser.parse())
-                            this.loots.add(parser.getLoot());
+                        if (parser.parse() && parser.getLoot() != null)
+                            loots.add(parser.getLoot());
                         else
-                            NovaStructura.log("Failed to parse " + item.material() + ", please check config file (item skip in loottable)", LogType.ERROR);
+                            NovaStructura.log("[" + name + "] Failed to parse " + item.material() + ", please check config file (item skip in loottable)", LogType.ERROR);
 
                     }
 
@@ -93,6 +97,6 @@ public class LootTable implements Serializable {
             e.printStackTrace();
         }
 
-        return new ArrayList<>();
+        return loots;
     }
 }

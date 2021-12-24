@@ -43,30 +43,35 @@ public class ItemParser {
 
     public boolean parse() {
         try {
-            ItemStack item = new ItemStack(Material.getMaterial(stringItem.material()), stringItem.amount());
+            ItemStack item = new ItemStack(Material.getMaterial(stringItem.material().toUpperCase()), stringItem.amount());
 
             //Parsing enchant
-            for (StringEnchant stringEnchant : stringEnchants)
-                item.addUnsafeEnchantment(Enchantment.getByName(stringEnchant.enchantName().toUpperCase()), stringEnchant.level());
+            if (stringEnchants != null)
+                for (StringEnchant stringEnchant : stringEnchants)
+                    item.addUnsafeEnchantment(Enchantment.getByName(stringEnchant.enchantName().toUpperCase()), stringEnchant.level());
 
             //Parsing potion
-            PotionMeta potionMeta = (PotionMeta) item.getItemMeta();
-            for (StringPotion potion : stringPotions) {
+            if (stringPotions != null) {
+                PotionMeta potionMeta = (PotionMeta) item.getItemMeta();
+                for (StringPotion potion : stringPotions) {
 
-                PotionEffectType potionEffectType = PotionEffectType.getByName(potion.effect().toUpperCase());
-                int duration = potion.duration();
-                int amplifier = potion.amplifier();
+                    PotionEffectType potionEffectType = PotionEffectType.getByName(potion.effect().toUpperCase());
+                    int duration = potion.duration();
+                    int amplifier = potion.amplifier();
 
-                potionMeta.setColor(Color.fromRGB(ThreadLocalRandom.current().nextInt(0, 255 + 1), ThreadLocalRandom.current().nextInt(0, 255 + 1), ThreadLocalRandom.current().nextInt(0, 255 + 1)));
-                potionMeta.addCustomEffect(new PotionEffect(potionEffectType, duration, amplifier), true);
-                item.setItemMeta(potionMeta);
+                    potionMeta.setColor(Color.fromRGB(ThreadLocalRandom.current().nextInt(0, 255 + 1), ThreadLocalRandom.current().nextInt(0, 255 + 1), ThreadLocalRandom.current().nextInt(0, 255 + 1)));
+                    potionMeta.addCustomEffect(new PotionEffect(potionEffectType, duration, amplifier), true);
+                    item.setItemMeta(potionMeta);
 
-                ItemMeta meta = item.getItemMeta();
-                meta.displayName(Component.text().content("Potion of " + potionEffectType.getName().toLowerCase()).build());
-                item.setItemMeta(meta);
-
+                    ItemMeta meta = item.getItemMeta();
+                    meta.displayName(Component.text().content("Potion of " + potionEffectType.getName().toLowerCase()).build());
+                    item.setItemMeta(meta);
+                }
             }
+            
+            this.loot = new Loot(item,luck);
             return true;
+
         } catch (Exception ignored) {
             return false;
         }
