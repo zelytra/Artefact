@@ -2,6 +2,7 @@ package fr.zelytra.novaStructura.manager.structure;
 
 import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.logs.LogType;
+import fr.zelytra.novaStructura.manager.loottable.Loot;
 import fr.zelytra.novaStructura.manager.loottable.LootTable;
 import fr.zelytra.novaStructura.manager.schematic.Schematic;
 import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
@@ -12,6 +13,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +34,13 @@ public class Structure {
 
     private File config;
     private Schematic schematic;
+
     private LootTable lootTable;
+    private List<Material> lootContainer = new ArrayList<>();
+
+    {
+        lootContainer.add(Material.CHEST);
+    }
 
     private int offsetX = 0, offsetY = 0, offsetZ = 0;
     private double value = 1, outOf = 500;
@@ -123,6 +131,14 @@ public class Structure {
         return name;
     }
 
+    public LootTable getLootTable() {
+        return lootTable;
+    }
+
+    public List<Material> getLootContainer() {
+        return lootContainer;
+    }
+
     public int getMinHeight() {
         return minHeight;
     }
@@ -191,6 +207,7 @@ public class Structure {
             configFile.set("properties.whitelistBlock", whitelistedBlocks);
 
             configFile.set("lootTable", lootTable != null ? lootTable.getName() : "");
+            configFile.set("lootContainer", ConfParser.unparseMaterial(lootContainer));
 
             configFile.save(conf);
             return conf;
@@ -217,7 +234,8 @@ public class Structure {
                 throw new ConfigParserException("Invalid outOf value detected. Must be higher than 0 and higher than luck value");
 
             worlds = (List<String>) configFile.getList("location.worlds");
-            //biomes = configFile.getList("location.biomes");
+            biomes = (List<Biome>) configFile.getList("location.biomes");
+            whitelistedBlocks = (List<Material>) configFile.getList("properties.whitelistBlock");
             offsetX = configFile.getInt("location.offset.x");
             offsetY = configFile.getInt("location.offset.y");
             offsetZ = configFile.getInt("location.offset.z");
@@ -234,9 +252,12 @@ public class Structure {
             if (!configFile.getString("lootTable").isEmpty() && LootTable.exist(configFile.getString("lootTable")))
                 lootTable = new LootTable(configFile.getString("lootTable"));
             else if (!configFile.getString("lootTable").isEmpty())
-                NovaStructura.log("[" + name + "] Any loottable with this name, please check config", LogType.ERROR);
+                throw new ConfigParserException("[" + name + "] Any loottable with this name, please check config");
 
-            //whitelistedBlocks = configFile.getList("properties.whitelistBlock");
+            if (configFile.getList("lootContainer") != null)
+                lootContainer = ConfParser.parseMaterial((List<String>) configFile.getList("lootContainer"));
+
+
             return true;
 
         } catch (InvalidConfigurationException | IOException | ConfigParserException e) {
@@ -249,6 +270,8 @@ public class Structure {
     public String toString() {
         return "§8---------------§6 [ Structure Data ] §8---------------" + "\n" +
                 "§8⬤ §6Name: §8" + name + "\n" +
+                "§8⬤ §6LootTable: §8" + (lootTable != null ? lootTable.getName() : "any") + "\n" +
+                "§8⬤ §6LootContainer: §8" + lootContainer + "\n" +
                 "§8⬤ §6Luck: §8" + value + "/" + outOf + "\n" +
                 "§8⬤ §6OffSet: x=§8" + offsetX + " §6y=§8" + offsetY + " §6z=§8" + offsetZ + "\n" +
                 "§8⬤ §6Height: Ymax=§8" + maxHeight + " §6Ymin=§8" + minHeight + "\n" +
@@ -273,5 +296,31 @@ public class Structure {
         config.delete();
         schematic.delete();
         structureList.remove(this);
+    }
+
+    public ItemStack[] drawLoot() {
+        ItemStack[] content = new ItemStack[27];
+
+        for (int i = 0; i <= lootTable.getDraw(); i++) {
+
+            int slotRandom = (int) (Math.random() * (content.length));
+
+            if (content[slotRandom] != null) continue;
+
+
+            double random = Math.random() * 100;
+
+            for (Loot loot : lootTable.getLoots()) {
+
+                if (loot.luck() > random) {
+                    content[slotRandom] = loot.item();
+                    break;
+                }
+                random -= loot.luck();
+
+            }
+
+        }
+        return content;
     }
 }

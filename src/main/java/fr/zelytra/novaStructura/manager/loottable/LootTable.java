@@ -18,6 +18,7 @@ import java.util.List;
 public class LootTable implements Serializable {
 
     private final String name;
+    private int draw;
     private final List<Loot> loots;
 
     public LootTable(String name) {
@@ -46,6 +47,10 @@ public class LootTable implements Serializable {
         return loots;
     }
 
+    public int getDraw() {
+        return draw;
+    }
+
     private List<Loot> loadFromFile(String name) {
         File pluginFolder = new File(StructureManager.PATH + File.separator + StructureFolder.LOOTS);
         List<Loot> loots = new ArrayList<>();
@@ -58,6 +63,12 @@ public class LootTable implements Serializable {
 
                     FileConfiguration configFile = new YamlConfiguration();
                     configFile.load(file);
+
+                    this.draw = configFile.getInt("draw");
+                    if (!(draw >= 0 && draw <= 27)) {
+                        NovaStructura.log("[" + name + "] Failed to parse " + name + ", please check draw number (must be between 0 and 27)", LogType.ERROR);
+                        break;
+                    }
 
                     for (String itemTag : configFile.getKeys(false)) {
 

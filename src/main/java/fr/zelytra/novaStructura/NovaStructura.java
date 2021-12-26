@@ -2,7 +2,6 @@ package fr.zelytra.novaStructura;
 
 import fr.zelytra.novaStructura.commands.Test;
 import fr.zelytra.novaStructura.commands.structure.StructureCommand;
-import fr.zelytra.novaStructura.commands.structure.StructureConsoleCommand;
 import fr.zelytra.novaStructura.commands.structure.TabCommands;
 import fr.zelytra.novaStructura.events.EventManager;
 import fr.zelytra.novaStructura.manager.logs.LogType;
@@ -53,7 +52,6 @@ public final class NovaStructura extends JavaPlugin {
         getCommand("test").setExecutor(new Test());
 
         getCommand("novastruct").setExecutor(new StructureCommand());
-        getCommand("novastruct").setExecutor(new StructureConsoleCommand());
         getCommand("novastruct").setTabCompleter(new TabCommands());
     }
 
