@@ -2,8 +2,8 @@ package fr.zelytra.novaStructura.manager.structure;
 
 import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.logs.LogType;
-import fr.zelytra.novaStructura.manager.loottable.Loot;
 import fr.zelytra.novaStructura.manager.loottable.LootTable;
+import fr.zelytra.novaStructura.manager.loottable.parser.Loot;
 import fr.zelytra.novaStructura.manager.schematic.Schematic;
 import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
 import fr.zelytra.novaStructura.utils.timer.Timer;
@@ -312,11 +312,11 @@ public class Structure {
 
             for (Loot loot : lootTable.getLoots()) {
 
-                if (loot.luck() > random) {
-                    content[slotRandom] = loot.item();
+                if (loot.getLuck() > random) {
+                    content[slotRandom] = loot.parse();
                     break;
                 }
-                random -= loot.luck();
+                random -= loot.getLuck();
 
             }
 
