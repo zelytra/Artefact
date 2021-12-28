@@ -43,8 +43,8 @@ public class Schematic implements Serializable {
 
                     Material material = Material.getMaterial(materialMaps.get(blockMap[x][y][z].getMaterialId()).materialName());
 
-                    if (structure.isPlaceAir() && material == Material.AIR) continue;
-                    ;
+                    if (!structure.isPlaceAir() && material == Material.AIR) continue;
+
                     if (structure.getLootTable() != null && structure.getLootContainer().contains(material))
                         setBlockList.add(new SetBlock(location.getWorld(),
                                 location.getBlockX() + x,

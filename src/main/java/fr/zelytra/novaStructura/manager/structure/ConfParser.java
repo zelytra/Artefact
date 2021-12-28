@@ -25,10 +25,10 @@ public abstract class ConfParser {
         for (String material : data) {
             try {
 
-                if (Material.getMaterial(material) == null)
+                if (Material.getMaterial(material.toUpperCase()) == null)
                     throw new ConfigParserException("Material name not found for " + material);
 
-                materials.add(Material.getMaterial(material));
+                materials.add(Material.getMaterial(material.toUpperCase()));
 
             } catch (ConfigParserException e) {
                 NovaStructura.log(e.getLocalizedMessage(), LogType.ERROR);

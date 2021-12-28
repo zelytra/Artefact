@@ -71,7 +71,6 @@ public class LootTable implements Serializable {
             try {
 
                 int min = Integer.parseInt(ranges[0]) , max = Integer.parseInt(ranges[1]) ;
-                System.out.println(min + " " + max);
                 return new DynamicRange(min, max);
 
             } catch (NumberFormatException ignored2) {
@@ -215,8 +214,6 @@ public class LootTable implements Serializable {
                 }
             }
         }
-        for (StringEnchant enchant : enchants)
-            System.out.println(enchant);
         return enchants;
     }
 }
