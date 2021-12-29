@@ -11,9 +11,16 @@ import fr.zelytra.novaStructura.manager.loottable.parser.LootConf;
 import fr.zelytra.novaStructura.manager.structure.StructureFolder;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
 import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -21,6 +28,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class LootTable implements Serializable {
 
@@ -70,7 +78,7 @@ public class LootTable implements Serializable {
 
             try {
 
-                int min = Integer.parseInt(ranges[0]) , max = Integer.parseInt(ranges[1]) ;
+                int min = Integer.parseInt(ranges[0]), max = Integer.parseInt(ranges[1]);
                 return new DynamicRange(min, max);
 
             } catch (NumberFormatException ignored2) {
@@ -108,7 +116,8 @@ public class LootTable implements Serializable {
                         //Enchant parser
                         StringEnchant[] enchants = parseEnchant(itemTag, configFile);
 
-                        StringPotion[] potions = new StringPotion[0];
+                        //Potion parser
+                        StringPotion[] potions = parsePotion(itemTag, configFile);
 
                         Loot loot;
 
@@ -140,6 +149,42 @@ public class LootTable implements Serializable {
 
         return loots;
     }
+
+    private StringPotion[] parsePotion(String path, FileConfiguration conf) {
+        DynamicRange dynamicRange;
+        StringPotion[] potions;
+
+        if (conf.getString(path + LootConf.SEPARATOR + LootConf.POTION) != null) {
+            if (conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.ENCHANT).getKeys(true).size() == 2) {
+
+                if (conf.getString(path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + LootConf.POTION_AMPLIFIER).contains(";")) {
+
+                    DynamicRange range = getRangedAmount(conf.getString(path + LootConf.SEPARATOR + LootConf.ENCHANT + LootConf.SEPARATOR + LootConf.ENCHANT_LEVEL));
+                    enchants = new StringEnchant[]{new StringEnchant(conf.getString(path + LootConf.SEPARATOR + LootConf.ENCHANT + LootConf.SEPARATOR + LootConf.ENCHANT_TYPE), range)};
+
+                    if (range.min() <= 0 || range.max() <= 0)
+                        throw new ConfigParserException("[" + name + "] Failed to parse " + name + ", please check enchant level amount syntax");
+
+                } else {
+                    int level = conf.getInt(path + LootConf.SEPARATOR + LootConf.ENCHANT + LootConf.SEPARATOR + LootConf.ENCHANT_LEVEL);
+
+                    if (level == 0)
+                        throw new ConfigParserException("[" + name + "] Failed to parse " + name + ", please check enchant level amount syntax");
+
+                    enchants = new StringEnchant[]{new StringEnchant(conf.getString(path + LootConf.SEPARATOR + LootConf.ENCHANT + LootConf.SEPARATOR + LootConf.ENCHANT_TYPE), level)};
+                }
+
+            } else {
+
+
+            }
+
+        }
+
+
+    }
+
+}
 
     private @NotNull StringItem parseItem(String path, @NotNull FileConfiguration conf) throws ConfigParserException {
         DynamicRange dynamicRange;
