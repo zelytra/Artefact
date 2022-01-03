@@ -11,16 +11,9 @@ import fr.zelytra.novaStructura.manager.loottable.parser.LootConf;
 import fr.zelytra.novaStructura.manager.structure.StructureFolder;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
 import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -28,7 +21,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class LootTable implements Serializable {
 
@@ -150,41 +142,62 @@ public class LootTable implements Serializable {
         return loots;
     }
 
-    private StringPotion[] parsePotion(String path, FileConfiguration conf) {
-        DynamicRange dynamicRange;
-        StringPotion[] potions;
+    private StringPotion[] parsePotion(String path, FileConfiguration conf) throws ConfigParserException {
+        StringPotion[] potions = new StringPotion[0];
 
         if (conf.getString(path + LootConf.SEPARATOR + LootConf.POTION) != null) {
-            if (conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.ENCHANT).getKeys(true).size() == 2) {
+            if (conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.POTION).getKeys(true).size() == 2) {
 
                 if (conf.getString(path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + LootConf.POTION_AMPLIFIER).contains(";")) {
 
-                    DynamicRange range = getRangedAmount(conf.getString(path + LootConf.SEPARATOR + LootConf.ENCHANT + LootConf.SEPARATOR + LootConf.ENCHANT_LEVEL));
-                    enchants = new StringEnchant[]{new StringEnchant(conf.getString(path + LootConf.SEPARATOR + LootConf.ENCHANT + LootConf.SEPARATOR + LootConf.ENCHANT_TYPE), range)};
+                    DynamicRange amplifier = getRangedAmount(conf.getString(path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + LootConf.POTION_AMPLIFIER));
+                    potions = new StringPotion[]{new StringPotion(conf.getString(path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + LootConf.POTION_TYPE), amplifier, conf.getInt(path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + LootConf.POTION_DURATION))};
 
-                    if (range.min() <= 0 || range.max() <= 0)
-                        throw new ConfigParserException("[" + name + "] Failed to parse " + name + ", please check enchant level amount syntax");
+                    if (amplifier.min() <= 0 || amplifier.max() <= 0)
+                        throw new ConfigParserException("[" + name + "] Failed to parse " + name + ", please check potion amplifier level syntax");
 
                 } else {
-                    int level = conf.getInt(path + LootConf.SEPARATOR + LootConf.ENCHANT + LootConf.SEPARATOR + LootConf.ENCHANT_LEVEL);
+                    int amplifier = conf.getInt(path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + LootConf.POTION_AMPLIFIER);
 
-                    if (level == 0)
-                        throw new ConfigParserException("[" + name + "] Failed to parse " + name + ", please check enchant level amount syntax");
+                    if (amplifier == 0)
+                        throw new ConfigParserException("[" + name + "] Failed to parse " + name + ",  please check potion amplifier level syntax");
 
-                    enchants = new StringEnchant[]{new StringEnchant(conf.getString(path + LootConf.SEPARATOR + LootConf.ENCHANT + LootConf.SEPARATOR + LootConf.ENCHANT_TYPE), level)};
+                    potions = new StringPotion[]{new StringPotion(conf.getString(path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + LootConf.POTION_TYPE), amplifier, conf.getInt(path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + LootConf.POTION_DURATION))};
                 }
 
             } else {
+                potions = new StringPotion[conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.POTION).getKeys(false).size()];
+                int potionCount = 0;
 
+                for (String enchantTag : conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.POTION).getKeys(false)) {
 
+                    String pathToEnchant = path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + enchantTag + LootConf.SEPARATOR;
+
+                    if (conf.getString(pathToEnchant + LootConf.POTION_AMPLIFIER).contains(";")) {
+
+                        DynamicRange range = getRangedAmount(conf.getString(pathToEnchant + LootConf.POTION_AMPLIFIER));
+                        potions[potionCount] = new StringPotion(conf.getString(pathToEnchant + LootConf.POTION_TYPE), range, conf.getInt(pathToEnchant + LootConf.POTION_DURATION));
+
+                        if (range.min() <= 0 || range.max() <= 0)
+                            throw new ConfigParserException("[" + name + "] Failed to parse " + name + ", please check potion amplifier level syntax");
+
+                    } else {
+                        int amplifier = conf.getInt(pathToEnchant + LootConf.POTION_AMPLIFIER);
+
+                        if (amplifier == 0)
+                            throw new ConfigParserException("[" + name + "] Failed to parse " + name + ", please check potion amplifier level syntax");
+
+                        potions[potionCount] = new StringPotion(conf.getString(pathToEnchant + LootConf.POTION_TYPE), amplifier, conf.getInt(pathToEnchant + LootConf.POTION_DURATION));
+                    }
+
+                    potionCount++;
+                }
             }
-
         }
 
+        return potions;
 
     }
-
-}
 
     private @NotNull StringItem parseItem(String path, @NotNull FileConfiguration conf) throws ConfigParserException {
         DynamicRange dynamicRange;

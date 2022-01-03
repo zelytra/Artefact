@@ -4,16 +4,16 @@ public class StringPotion {
 
     private final String effect;
 
-    private int amplifier,duration;
+    private int amplifier, duration;
     private DynamicRange amplifierRange;
 
-    public StringPotion(String effect, int amplifier, int duration){
-    this.effect = effect;
-    this.amplifier = amplifier;
-    this.duration = duration;
+    public StringPotion(String effect, int amplifier, int duration) {
+        this.effect = effect;
+        this.amplifier = amplifier;
+        this.duration = duration;
     }
 
-    public StringPotion(String effect, DynamicRange amplifierRange, int duration){
+    public StringPotion(String effect, DynamicRange amplifierRange, int duration) {
         this.effect = effect;
         this.amplifierRange = amplifierRange;
         this.duration = duration;
@@ -31,6 +31,6 @@ public class StringPotion {
     }
 
     public int getDuration() {
-        return duration;
+        return duration * 20;
     }
 }
