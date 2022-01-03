@@ -130,12 +130,15 @@ public class LootTable implements Serializable {
                         else
                             throw new ConfigParserException("[" + name + "] Failed to parse " + item.getMaterial() + ", please check config file");
 
+                        System.out.println(loot);
+
                     }
 
                 }
             }
 
         } catch (IOException | InvalidConfigurationException | ConfigParserException e) {
+            e.printStackTrace();
             NovaStructura.log(e.getLocalizedMessage(), LogType.ERROR);
         }
 
@@ -146,7 +149,7 @@ public class LootTable implements Serializable {
         StringPotion[] potions = new StringPotion[0];
 
         if (conf.getString(path + LootConf.SEPARATOR + LootConf.POTION) != null) {
-            if (conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.POTION).getKeys(true).size() == 2) {
+            if (conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.POTION).getKeys(true).size() == 3) {
 
                 if (conf.getString(path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + LootConf.POTION_AMPLIFIER).contains(";")) {
 
@@ -169,25 +172,25 @@ public class LootTable implements Serializable {
                 potions = new StringPotion[conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.POTION).getKeys(false).size()];
                 int potionCount = 0;
 
-                for (String enchantTag : conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.POTION).getKeys(false)) {
+                for (String potionTag : conf.getConfigurationSection(path + LootConf.SEPARATOR + LootConf.POTION).getKeys(false)) {
 
-                    String pathToEnchant = path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + enchantTag + LootConf.SEPARATOR;
+                    String pathToPotion = path + LootConf.SEPARATOR + LootConf.POTION + LootConf.SEPARATOR + potionTag + LootConf.SEPARATOR;
 
-                    if (conf.getString(pathToEnchant + LootConf.POTION_AMPLIFIER).contains(";")) {
+                    if (conf.getString(pathToPotion + LootConf.POTION_AMPLIFIER).contains(";")) {
 
-                        DynamicRange range = getRangedAmount(conf.getString(pathToEnchant + LootConf.POTION_AMPLIFIER));
-                        potions[potionCount] = new StringPotion(conf.getString(pathToEnchant + LootConf.POTION_TYPE), range, conf.getInt(pathToEnchant + LootConf.POTION_DURATION));
+                        DynamicRange range = getRangedAmount(conf.getString(pathToPotion + LootConf.POTION_AMPLIFIER));
+                        potions[potionCount] = new StringPotion(conf.getString(pathToPotion + LootConf.POTION_TYPE), range, conf.getInt(pathToPotion + LootConf.POTION_DURATION));
 
-                        if (range.min() <= 0 || range.max() <= 0)
+                        if (range.min() < 0 || range.max() <= 0)
                             throw new ConfigParserException("[" + name + "] Failed to parse " + name + ", please check potion amplifier level syntax");
 
                     } else {
-                        int amplifier = conf.getInt(pathToEnchant + LootConf.POTION_AMPLIFIER);
+                        int amplifier = conf.getInt(pathToPotion + LootConf.POTION_AMPLIFIER);
 
-                        if (amplifier == 0)
+                        if (amplifier < 0)
                             throw new ConfigParserException("[" + name + "] Failed to parse " + name + ", please check potion amplifier level syntax");
 
-                        potions[potionCount] = new StringPotion(conf.getString(pathToEnchant + LootConf.POTION_TYPE), amplifier, conf.getInt(pathToEnchant + LootConf.POTION_DURATION));
+                        potions[potionCount] = new StringPotion(conf.getString(pathToPotion + LootConf.POTION_TYPE), amplifier, conf.getInt(pathToPotion + LootConf.POTION_DURATION));
                     }
 
                     potionCount++;

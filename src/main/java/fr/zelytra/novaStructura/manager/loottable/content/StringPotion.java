@@ -33,4 +33,9 @@ public class StringPotion {
     public int getDuration() {
         return duration * 20;
     }
+
+    @Override
+    public String toString() {
+        return "Potion Type: " + effect + " Duration: " + duration + " Amplifier: " + getAmplifier();
+    }
 }
