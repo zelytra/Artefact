@@ -4,6 +4,7 @@ import fr.zelytra.novaStructura.NovaStructura;
 import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,5 +37,13 @@ public abstract class ConfParser {
         }
         return materials;
 
+    }
+
+    public static List<Biome> parseBiome(List<String> list) {
+        List<Biome> biomes = new ArrayList<>();
+        for (String biome : list)
+            if (Biome.valueOf(biome) != null)
+                biomes.add(Biome.valueOf(biome));
+        return biomes;
     }
 }

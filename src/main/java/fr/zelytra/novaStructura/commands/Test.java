@@ -13,7 +13,7 @@ public class Test implements CommandExecutor {
         if (!(sender instanceof Player)) return false;
 
         Player player = (Player) sender;
-
+        //System.out.println(player.getWorld().getBiome(player.getLocation()).name());
         return true;
     }
 }

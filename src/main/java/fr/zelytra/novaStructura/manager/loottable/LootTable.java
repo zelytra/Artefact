@@ -129,9 +129,6 @@ public class LootTable implements Serializable {
                             loots.add(loot);
                         else
                             throw new ConfigParserException("[" + name + "] Failed to parse " + item.getMaterial() + ", please check config file");
-
-                        System.out.println(loot);
-
                     }
 
                 }

@@ -109,6 +109,7 @@ public class Structure {
 
         if (Math.random() * outOf <= value) {
 
+            //TODO Handle custom biome with NMS FFS...
             if (!biomes.isEmpty() && !biomes.contains(spawnLocation.getWorld().getBiome(spawnLocation)))
                 return false;
 
@@ -234,8 +235,9 @@ public class Structure {
                 throw new ConfigParserException("Invalid outOf value detected. Must be higher than 0 and higher than luck value");
 
             worlds = (List<String>) configFile.getList("location.worlds");
-            biomes = (List<Biome>) configFile.getList("location.biomes");
+            biomes = ConfParser.parseBiome((List<String>) configFile.getList("location.biomes"));
             whitelistedBlocks = (List<Material>) configFile.getList("properties.whitelistBlock");
+
             offsetX = configFile.getInt("location.offset.x");
             offsetY = configFile.getInt("location.offset.y");
             offsetZ = configFile.getInt("location.offset.z");
