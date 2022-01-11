@@ -45,7 +45,7 @@ public class Structure {
     private int offsetX = 0, offsetY = 0, offsetZ = 0;
     private double value = 1, outOf = 500;
     private int minHeight = 0, maxHeight = 255;
-    private boolean placeAir = true, randomRotation = true, spawnOnWater = false, spawnOnLava = false, spawnInCave = false;
+    private boolean placeAir = true, randomRotation = true, spawnInWater = false, spawnInLava = false, spawnInCave = false;
     private boolean smartPaste = false;
 
     public Structure(Schematic schematic, String name) {
@@ -160,12 +160,12 @@ public class Structure {
         return maxHeight;
     }
 
-    public boolean isSpawnOnWater() {
-        return spawnOnWater;
+    public boolean isSpawnInWater() {
+        return spawnInWater;
     }
 
-    public boolean isSpawnOnLava() {
-        return spawnOnLava;
+    public boolean isSpawnInLava() {
+        return spawnInLava;
     }
 
     public boolean isSpawnInCave() {
@@ -201,8 +201,8 @@ public class Structure {
 
             configFile.set("properties.placeAir", placeAir);
             configFile.set("properties.randomRotation", randomRotation);
-            configFile.set("properties.spawnOnWater", spawnOnWater);
-            configFile.set("properties.spawnOnLava", spawnOnLava);
+            configFile.set("properties.spawnOnWater", spawnInWater);
+            configFile.set("properties.spawnOnLava", spawnInLava);
             configFile.set("properties.spawnInCave", spawnInCave);
             configFile.set("properties.smartPaste", smartPaste);
             configFile.set("properties.whitelistBlock", whitelistedBlocks);
@@ -236,7 +236,7 @@ public class Structure {
 
             worlds = (List<String>) configFile.getList("location.worlds");
             biomes = ConfParser.parseBiome((List<String>) configFile.getList("location.biomes"));
-            whitelistedBlocks = (List<Material>) configFile.getList("properties.whitelistBlock");
+            whitelistedBlocks = ConfParser.parseMaterial((List<String>) configFile.getList("properties.whitelistBlock"));
 
             offsetX = configFile.getInt("location.offset.x");
             offsetY = configFile.getInt("location.offset.y");
@@ -246,8 +246,8 @@ public class Structure {
 
             placeAir = configFile.getBoolean("properties.placeAir");
             randomRotation = configFile.getBoolean("properties.randomRotation");
-            spawnOnWater = configFile.getBoolean("properties.spawnOnWater");
-            spawnOnLava = configFile.getBoolean("properties.spawnOnLava");
+            spawnInWater = configFile.getBoolean("properties.spawnOnWater");
+            spawnInLava = configFile.getBoolean("properties.spawnOnLava");
             spawnInCave = configFile.getBoolean("properties.spawnInCave");
             smartPaste = configFile.getBoolean("properties.smartPaste");
 
@@ -258,7 +258,6 @@ public class Structure {
 
             if (configFile.getList("lootContainer") != null)
                 lootContainer = ConfParser.parseMaterial((List<String>) configFile.getList("lootContainer"));
-
 
             return true;
 
@@ -281,8 +280,8 @@ public class Structure {
                 "§8⬤ §6Biomes: §8" + biomes + "\n" +
                 "§8⬤ §6PlaceAir: " + (placeAir ? "§a" : "§c") + randomRotation + "\n" +
                 "§8⬤ §6RandomRotation: " + (randomRotation ? "§a" : "§c") + randomRotation + "\n" +
-                "§8⬤ §6SpawnOnLava: " + (spawnOnLava ? "§a" : "§c") + spawnOnLava + "\n" +
-                "§8⬤ §6SpawnOnWater: " + (spawnOnWater ? "§a" : "§c") + spawnOnWater + "\n" +
+                "§8⬤ §6SpawnOnLava: " + (spawnInLava ? "§a" : "§c") + spawnInLava + "\n" +
+                "§8⬤ §6SpawnOnWater: " + (spawnInWater ? "§a" : "§c") + spawnInWater + "\n" +
                 "§8⬤ §6SpawnInCave: " + (spawnInCave ? "§a" : "§c") + spawnInCave + "\n" +
                 "§8⬤ §6SmartPaste: " + (smartPaste ? "§a" : "§c") + smartPaste + "\n";
     }

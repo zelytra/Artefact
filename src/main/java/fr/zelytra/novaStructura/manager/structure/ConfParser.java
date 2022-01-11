@@ -39,11 +39,23 @@ public abstract class ConfParser {
 
     }
 
-    public static List<Biome> parseBiome(List<String> list) {
+    public static List<Biome> parseBiome(List<String> data) {
         List<Biome> biomes = new ArrayList<>();
-        for (String biome : list)
-            if (Biome.valueOf(biome) != null)
-                biomes.add(Biome.valueOf(biome));
+
+        for (String material : data) {
+            try {
+
+                if (Material.getMaterial(material.toUpperCase()) == null)
+                    throw new ConfigParserException("Biome name not found for " + material);
+
+                biomes.add(Biome.valueOf(material.toUpperCase()));
+
+            } catch (ConfigParserException e) {
+                NovaStructura.log(e.getLocalizedMessage(), LogType.ERROR);
+            }
+        }
         return biomes;
     }
+
+
 }

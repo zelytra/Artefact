@@ -27,7 +27,7 @@ public class OnNewChunk implements Listener {
 
     }
 
-    private @NotNull Location getRandomLocInChunk(@NotNull Chunk chunk, Structure structure) {
+    private Location getRandomLocInChunk(@NotNull Chunk chunk, Structure structure) {
 
         int randomX = (int) (chunkSize * Math.random());
         int randomZ = (int) (chunkSize * Math.random());
@@ -49,7 +49,7 @@ public class OnNewChunk implements Listener {
             }
 
 
-        } else if (structure.isSpawnOnLava()) {
+        } else if (structure.isSpawnInLava()) {
 
             for (int y = structure.getMinHeight(); y <= structure.getMaxHeight(); y++) {
 
@@ -63,7 +63,7 @@ public class OnNewChunk implements Listener {
 
             }
 
-        } else if (structure.isSpawnOnWater()) {
+        } else if (structure.isSpawnInWater()) {
 
             for (int y = structure.getMinHeight(); y <= structure.getMaxHeight(); y++) {
 
