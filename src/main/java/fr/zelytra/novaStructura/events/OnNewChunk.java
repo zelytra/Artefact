@@ -11,6 +11,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class OnNewChunk implements Listener {
+
     private final static int chunkSize = 16;
 
     @EventHandler

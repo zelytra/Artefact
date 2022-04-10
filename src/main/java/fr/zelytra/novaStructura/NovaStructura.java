@@ -17,7 +17,7 @@ public final class NovaStructura extends JavaPlugin {
     private static Logs logs;
 
     public static boolean debugMod = true;
-    public static String version = "v1.0";
+    public static String version = "v1.1";
     public static boolean isReloading = false;
 
     public static StructureManager structureManager;

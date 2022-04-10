@@ -1,5 +1,6 @@
 package fr.zelytra.novaStructura.commands;
 
+import fr.zelytra.novaStructura.manager.biome.NovaBiome;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,7 +14,8 @@ public class Test implements CommandExecutor {
         if (!(sender instanceof Player)) return false;
 
         Player player = (Player) sender;
-        //System.out.println(player.getWorld().getBiome(player.getLocation()).name());
+        System.out.println("oskour");
+        System.out.println(new NovaBiome(player.getLocation()).getBiomeKey());
         return true;
     }
 }
