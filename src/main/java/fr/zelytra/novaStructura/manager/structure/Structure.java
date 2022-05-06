@@ -1,6 +1,7 @@
 package fr.zelytra.novaStructura.manager.structure;
 
 import fr.zelytra.novaStructura.NovaStructura;
+import fr.zelytra.novaStructura.manager.biome.NovaBiome;
 import fr.zelytra.novaStructura.manager.logs.LogType;
 import fr.zelytra.novaStructura.manager.loottable.LootTable;
 import fr.zelytra.novaStructura.manager.loottable.parser.Loot;
@@ -9,7 +10,6 @@ import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserExceptio
 import fr.zelytra.novaStructura.utils.timer.Timer;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Biome;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,14 +21,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Structure {
 
     public static List<Structure> structureList = new ArrayList<>();
+    private final static Random random = new Random();
 
     private String name;
     private List<String> worlds = new ArrayList<>();
-    private List<Biome> biomes = new ArrayList<>();
+    private List<NovaBiome> biomes = new ArrayList<>();
     private List<Material> whitelistedBlocks = new ArrayList<>();
 
 
@@ -105,27 +107,39 @@ public class Structure {
 
     }
 
-    public boolean naturalDraw(Location spawnLocation) {
+    public boolean draw() {
+        return random.nextInt(0, (int) outOf) <= value;
+    }
 
-        if (Math.random() * outOf <= value) {
+    public boolean spawnChecker(Location spawnLocation) {
+        if (!biomes.isEmpty()) {
 
-            //TODO Handle custom biome with NMS FFS...
-            if (!biomes.isEmpty() && !biomes.contains(spawnLocation.getWorld().getBiome(spawnLocation)))
+            boolean matchBiome = false;
+            NovaBiome actualBiome = new NovaBiome(spawnLocation);
+
+            for (NovaBiome biome : biomes) {
+                if (NovaBiome.match(biome, actualBiome)) {
+                    matchBiome = true;
+                    break;
+                }
+            }
+
+            if (!matchBiome)
                 return false;
-
-
-            if (!worlds.isEmpty() && !worlds.contains(spawnLocation.getWorld().getName()))
-                return false;
-
-
-            if (!whitelistedBlocks.isEmpty() && !whitelistedBlocks.contains(spawnLocation.getBlock().getType()))
-                return false;
-
-            return true;
         }
 
+
+        if (!worlds.isEmpty() && !worlds.contains(spawnLocation.getWorld().getName()))
+            return false;
+
+
+        if (!whitelistedBlocks.isEmpty() && !whitelistedBlocks.contains(spawnLocation.getBlock().getType()))
+            return false;
+
+        return true;
+
         //TODO check water or lava lack
-        return false;
+
     }
 
     public String getName() {

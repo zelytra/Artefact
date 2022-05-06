@@ -1,15 +1,15 @@
 package fr.zelytra.novaStructura.manager.schematic.workload;
 
 import com.google.common.collect.Queues;
-import fr.zelytra.novaStructura.NovaStructura;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayDeque;
 import java.util.List;
 
 public class WorkloadThread implements Runnable {
 
-    private static final int MAX_MS_PER_TICK = 30;
+    private static final double MAX_MS_PER_TICK = 2.5;
+    private static final int MAX_NANO_PER_TICK = (int) (MAX_MS_PER_TICK * 1E6);
+
     private final ArrayDeque<WorkLoad> workloadDeque;
 
     public WorkloadThread() {
@@ -27,16 +27,12 @@ public class WorkloadThread implements Runnable {
 
     @Override
     public void run() {
+        long stopTime = System.nanoTime() + MAX_NANO_PER_TICK;
 
-        Bukkit.getScheduler().runTaskTimer(NovaStructura.getInstance(), () -> {
-            long stopTime = System.currentTimeMillis() + MAX_MS_PER_TICK;
+        WorkLoad nextLoad;
 
-            while (!workloadDeque.isEmpty() && System.currentTimeMillis() <= stopTime) {
-                SetBlock block = (SetBlock) workloadDeque.poll();
-                block.compute();
-            }
-
-        }, 0, 2);
+        while (System.nanoTime() <= stopTime && (nextLoad = this.workloadDeque.poll()) != null)
+            nextLoad.compute();
 
     }
 

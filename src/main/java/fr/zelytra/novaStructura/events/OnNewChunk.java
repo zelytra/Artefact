@@ -1,6 +1,7 @@
 package fr.zelytra.novaStructura.events;
 
 import fr.zelytra.novaStructura.manager.structure.Structure;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,16 +13,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class OnNewChunk implements Listener {
 
-    private final static int chunkSize = 16;
+    private final static int CHUNK_SIZE = 16, Y_MAX = Bukkit.getWorld("world").getMaxHeight(), Y_MIN = Bukkit.getWorld("world").getMinHeight();
 
     @EventHandler
     public void onNewChunk(ChunkLoadEvent e) {
         if (!e.isNewChunk()) return;
+
         for (Structure structure : Structure.structureList) {
 
-            Location spawn = getRandomLocInChunk(e.getChunk(), structure);
+            if (!structure.draw()) {
+                continue;
+            }
 
-            if (spawn != null && structure.naturalDraw(spawn))
+            Location spawn = getRandomLocInChunk(e.getChunk(), structure);
+            if (spawn != null && structure.spawnChecker(spawn)){}
                 structure.paste(spawn);
         }
 
@@ -30,16 +35,16 @@ public class OnNewChunk implements Listener {
 
     private Location getRandomLocInChunk(@NotNull Chunk chunk, Structure structure) {
 
-        int randomX = (int) (chunkSize * Math.random());
-        int randomZ = (int) (chunkSize * Math.random());
+        int randomX = (int) (CHUNK_SIZE * Math.random());
+        int randomZ = (int) (CHUNK_SIZE * Math.random());
         int highestY = 0;
         boolean foundSpot = false;
 
         if (structure.isSpawnInCave()) {
 
-            for (int y = structure.getMinHeight(); y <= structure.getMaxHeight(); y++) {
+            for (int y = Math.max(structure.getMinHeight(), Y_MIN); y <= Math.min(structure.getMaxHeight(), Y_MAX); y++) {
 
-                Block block = chunk.getBlock(randomX, y + 1, randomZ);
+                Block block = chunk.getBlock(randomX, Math.min(y + 1,Y_MAX), randomZ);
                 if (block.getType() == Material.AIR) {
                     highestY = y;
                     foundSpot = true;
@@ -52,9 +57,9 @@ public class OnNewChunk implements Listener {
 
         } else if (structure.isSpawnInLava()) {
 
-            for (int y = structure.getMinHeight(); y <= structure.getMaxHeight(); y++) {
+            for (int y = Math.max(structure.getMinHeight(), Y_MIN); y <= Math.min(structure.getMaxHeight(), Y_MAX); y++) {
 
-                Block block = chunk.getBlock(randomX, y + 1, randomZ);
+                Block block = chunk.getBlock(randomX, Math.min(y + 1,Y_MAX), randomZ);
                 if (block.getType() == Material.LAVA) {
                     highestY = y;
                     foundSpot = true;
@@ -66,9 +71,9 @@ public class OnNewChunk implements Listener {
 
         } else if (structure.isSpawnInWater()) {
 
-            for (int y = structure.getMinHeight(); y <= structure.getMaxHeight(); y++) {
+            for (int y = Math.max(structure.getMinHeight(), Y_MIN); y <= Math.min(structure.getMaxHeight(), Y_MAX); y++) {
 
-                Block block = chunk.getBlock(randomX, y + 1, randomZ);
+                Block block = chunk.getBlock(randomX, Math.min(y + 1,Y_MAX), randomZ);
                 if (block.getType() == Material.WATER) {
                     highestY = y;
                     foundSpot = true;
@@ -79,13 +84,19 @@ public class OnNewChunk implements Listener {
             }
 
         } else {
-            highestY = chunk.getWorld().getHighestBlockYAt(randomX, randomZ);
-            foundSpot = true;
+            for (int y = Y_MAX; y >= Y_MIN; y--) {
+                Block block = chunk.getBlock(randomX, y - 1, randomZ);
+                if (block.getType() != Material.AIR) {
+                    foundSpot = true;
+                    highestY = y;
+                    break;
+                }
+            }
         }
 
         if (!foundSpot) return null;
 
 
-        return new Location(chunk.getWorld(), (chunk.getX() * chunkSize) + randomX, highestY, (chunk.getZ() * chunkSize) + randomZ);
+        return new Location(chunk.getWorld(), (chunk.getX() * CHUNK_SIZE) + randomX, highestY, (chunk.getZ() * CHUNK_SIZE) + randomZ);
     }
 }

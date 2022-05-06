@@ -17,7 +17,7 @@ public final class NovaStructura extends JavaPlugin {
     private static Logs logs;
 
     public static boolean debugMod = true;
-    public static String version = "v1.1";
+    public static String version = "v1.2";
     public static boolean isReloading = false;
 
     public static StructureManager structureManager;
@@ -38,7 +38,6 @@ public final class NovaStructura extends JavaPlugin {
         logs = new Logs();
         structureManager = new StructureManager();
         workloadThread = new WorkloadThread();
-        workloadThread.run();
 
         log("Started and ready to generate !", LogType.INFO);
     }
