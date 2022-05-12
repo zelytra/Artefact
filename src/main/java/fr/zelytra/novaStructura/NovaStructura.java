@@ -49,7 +49,6 @@ public final class NovaStructura extends JavaPlugin {
 
     private void regCommands() {
         getCommand("test").setExecutor(new Test());
-
         getCommand("novastruct").setExecutor(new StructureCommand());
         getCommand("novastruct").setTabCompleter(new TabCommands());
     }

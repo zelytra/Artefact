@@ -7,9 +7,12 @@ import fr.zelytra.novaStructura.manager.schematic.workload.WorkLoad;
 import fr.zelytra.novaStructura.manager.structure.Structure;
 import fr.zelytra.novaStructura.manager.structure.StructureFolder;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
+import fr.zelytra.novaStructura.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.CommandBlock;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ public class Schematic implements Serializable {
     private List<WorkLoad> generateWorkLoad(Location location, Structure structure) {
         List<WorkLoad> setBlockList = new ArrayList<>();
 
+        int cmdId = 0;
         for (int x = 0; x < blockMap.length; x++) {
             for (int y = 0; y < blockMap[x].length; y++) {
                 for (int z = 0; z < blockMap[x][y].length; z++) {
@@ -44,6 +48,7 @@ public class Schematic implements Serializable {
                     Material material = Material.getMaterial(materialMaps.get(blockMap[x][y][z].getMaterialId()).materialName());
 
                     if (!structure.isPlaceAir() && material == Material.AIR) continue;
+                    if (material == Material.STRUCTURE_VOID) continue;
 
                     if (structure.getLootTable() != null && structure.getLootContainer().contains(material))
                         setBlockList.add(new SetBlock(location.getWorld(),
@@ -60,6 +65,16 @@ public class Schematic implements Serializable {
                                 location.getBlockZ() + z,
                                 material,
                                 (blockMap[x][y][z].hasData() ? blockMap[x][y][z].getBlockData() : null)));
+
+                    if (material == Material.COMMAND_BLOCK) {
+                        int finalX = x;
+                        int finalY = y;
+                        int finalZ = z;
+                        int finalCmdId = cmdId;
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(NovaStructura.getInstance(),
+                                ()->Utils.executeCommandBlock(location.clone().add(finalX, finalY, finalZ),structure.commands.get(finalCmdId)),10);
+                        cmdId++;
+                    }
 
                 }
             }

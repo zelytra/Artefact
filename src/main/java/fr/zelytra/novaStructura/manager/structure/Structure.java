@@ -32,6 +32,7 @@ public class Structure {
     private List<String> worlds = new ArrayList<>();
     private List<NovaBiome> biomes = new ArrayList<>();
     private List<Material> whitelistedBlocks = new ArrayList<>();
+    public List<String> commands = new ArrayList<>();
 
 
     private File config;
@@ -47,8 +48,8 @@ public class Structure {
     private int offsetX = 0, offsetY = 0, offsetZ = 0;
     private double value = 1, outOf = 500;
     private int minHeight = 0, maxHeight = 255;
-    private boolean placeAir = true, randomRotation = true, spawnInWater = false, spawnInLava = false, spawnInCave = false;
-    private boolean smartPaste = false;
+    private boolean placeAir = true, randomRotation = false, spawnInWater = true, spawnInLava = true, spawnInCave = false;
+    private boolean smartPaste = true;
 
     public Structure(Schematic schematic, String name) {
 
@@ -108,7 +109,7 @@ public class Structure {
     }
 
     public boolean draw() {
-        return random.nextInt(0, (int) outOf) <= value;
+        return random.nextInt((int) outOf) <= value;
     }
 
     public boolean spawnChecker(Location spawnLocation) {
@@ -220,6 +221,7 @@ public class Structure {
             configFile.set("properties.spawnInCave", spawnInCave);
             configFile.set("properties.smartPaste", smartPaste);
             configFile.set("properties.whitelistBlock", whitelistedBlocks);
+            configFile.set("properties.commands", commands);
 
             configFile.set("lootTable", lootTable != null ? lootTable.getName() : "");
             configFile.set("lootContainer", ConfParser.unparseMaterial(lootContainer));
@@ -251,6 +253,7 @@ public class Structure {
             worlds = (List<String>) configFile.getList("location.worlds");
             biomes = ConfParser.parseBiome((List<String>) configFile.getList("location.biomes"));
             whitelistedBlocks = ConfParser.parseMaterial((List<String>) configFile.getList("properties.whitelistBlock"));
+            commands = (List<String>) configFile.getList("properties.commands");
 
             offsetX = configFile.getInt("location.offset.x");
             offsetY = configFile.getInt("location.offset.y");
@@ -292,6 +295,7 @@ public class Structure {
                 "§8⬤ §6Height: Ymax=§8" + maxHeight + " §6Ymin=§8" + minHeight + "\n" +
                 "§8⬤ §6Worlds: §8" + worlds + "\n" +
                 "§8⬤ §6Biomes: §8" + biomes + "\n" +
+                "§8⬤ §6Commands: §8" + commands + "\n" +
                 "§8⬤ §6PlaceAir: " + (placeAir ? "§a" : "§c") + randomRotation + "\n" +
                 "§8⬤ §6RandomRotation: " + (randomRotation ? "§a" : "§c") + randomRotation + "\n" +
                 "§8⬤ §6SpawnOnLava: " + (spawnInLava ? "§a" : "§c") + spawnInLava + "\n" +

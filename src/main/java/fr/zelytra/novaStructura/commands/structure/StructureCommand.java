@@ -27,12 +27,12 @@ public class StructureCommand implements CommandExecutor {
                     Structure structure = Structure.getStructure(args[1]);
 
                     if (structure == null) {
-                        NovaStructura.log("Any structure with this name found", LogType.ERROR);
+                        NovaStructura.log("No structure with this name found", LogType.ERROR);
                         return true;
                     }
 
                     structure.delete();
-                    NovaStructura.log("Structure delete", LogType.ERROR);
+                    NovaStructura.log("Structure deleted", LogType.ERROR);
                     return true;
 
                 } else if (args[0].equalsIgnoreCase("reload")) {
@@ -65,7 +65,7 @@ public class StructureCommand implements CommandExecutor {
             if (args[0].equalsIgnoreCase("create") && args.length == 2) {
 
                 if (Structure.exist(args[1])) {
-                    player.sendMessage(Message.PLAYER_PREFIX + "§cA structure already have this name. Please choose another");
+                    player.sendMessage(Message.PLAYER_PREFIX + "§cA structure already has this name. Please choose another");
                     return true;
                 }
                 Bukkit.getScheduler().runTaskAsynchronously(NovaStructura.getInstance(), () -> {
@@ -101,12 +101,12 @@ public class StructureCommand implements CommandExecutor {
                 Structure structure = Structure.getStructure(args[1]);
 
                 if (structure == null) {
-                    player.sendMessage(Message.PLAYER_PREFIX + "§cAny structure with this name found");
+                    player.sendMessage(Message.PLAYER_PREFIX + "§cNo structure with this name found");
                     return true;
                 }
 
                 structure.delete();
-                player.sendMessage(Message.PLAYER_PREFIX + "§6Structure delete");
+                player.sendMessage(Message.PLAYER_PREFIX + "§6Structure deleted");
                 return true;
 
             } else if (args[0].equalsIgnoreCase("reload")) {
@@ -120,7 +120,7 @@ public class StructureCommand implements CommandExecutor {
                 Structure structure = Structure.getStructure(args[1]);
 
                 if (structure == null) {
-                    player.sendMessage(Message.PLAYER_PREFIX + "§cAny structure with this name found");
+                    player.sendMessage(Message.PLAYER_PREFIX + "§cNo structure with this name found");
                     return true;
                 }
 
