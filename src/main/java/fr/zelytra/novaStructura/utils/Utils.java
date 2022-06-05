@@ -3,6 +3,7 @@ package fr.zelytra.novaStructura.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -59,20 +60,6 @@ public abstract class Utils {
             return true;
         }
         return false;
-    }
-
-    public static void executeCommandBlock(Location loc, String command) {
-        if (command == null) return;
-        if (command.contains("/")) command = command.replaceFirst("/","");
-        if (command.contains("~")) {
-            int x = loc.getBlock().getX(), y = loc.getBlock().getY(), z = loc.getBlock().getZ();
-            command = command.replaceFirst("~",x+"");
-            command = command.replaceFirst("~",y+"");
-            command = command.replaceFirst("~",z+"");
-        }
-        Bukkit.broadcastMessage(command);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),command);
-        loc.getBlock().setType(Material.AIR);
     }
 
 }

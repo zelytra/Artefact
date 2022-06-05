@@ -1,5 +1,6 @@
 package fr.zelytra.novaStructura.manager.schematic;
 
+import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 public class SchematicBlock implements Serializable {
 
     private String data;
+    private String nbt;
     private int materialId;
     private transient BlockData blockData;
 
@@ -19,19 +21,24 @@ public class SchematicBlock implements Serializable {
         this(materialId,data,null);
     }
 
-    public SchematicBlock(int materialId, BlockData data, String command) {
+    public SchematicBlock(int materialId, BlockData data, String nbt) {
         this.materialId = materialId;
-        if (command != null) Bukkit.broadcastMessage(command);
 
-        if (data instanceof Directional) {
-            this.data = data.getAsString();
-            this.blockData = data;
+        if (nbt != null) {
+            this.nbt = nbt;
         }
+
+        this.data = data.getAsString();
+        this.blockData = data;
 
     }
 
     public boolean hasData() {
         return data != null;
+    }
+
+    public boolean hasNBT() {
+        return nbt != null;
     }
 
     public int getMaterialId() {
@@ -41,5 +48,9 @@ public class SchematicBlock implements Serializable {
     public BlockData getBlockData() {
         if (blockData == null) this.blockData = Bukkit.createBlockData(data);
         return blockData;
+    }
+
+    public String getNBT() {
+        return nbt;
     }
 }

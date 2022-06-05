@@ -32,7 +32,6 @@ public class Structure {
     private List<String> worlds = new ArrayList<>();
     private List<NovaBiome> biomes = new ArrayList<>();
     private List<Material> whitelistedBlocks = new ArrayList<>();
-    public List<String> commands = new ArrayList<>();
 
 
     private File config;
@@ -221,7 +220,6 @@ public class Structure {
             configFile.set("properties.spawnInCave", spawnInCave);
             configFile.set("properties.smartPaste", smartPaste);
             configFile.set("properties.whitelistBlock", whitelistedBlocks);
-            configFile.set("properties.commands", commands);
 
             configFile.set("lootTable", lootTable != null ? lootTable.getName() : "");
             configFile.set("lootContainer", ConfParser.unparseMaterial(lootContainer));
@@ -253,7 +251,6 @@ public class Structure {
             worlds = (List<String>) configFile.getList("location.worlds");
             biomes = ConfParser.parseBiome((List<String>) configFile.getList("location.biomes"));
             whitelistedBlocks = ConfParser.parseMaterial((List<String>) configFile.getList("properties.whitelistBlock"));
-            commands = (List<String>) configFile.getList("properties.commands");
 
             offsetX = configFile.getInt("location.offset.x");
             offsetY = configFile.getInt("location.offset.y");
@@ -295,7 +292,6 @@ public class Structure {
                 "§8⬤ §6Height: Ymax=§8" + maxHeight + " §6Ymin=§8" + minHeight + "\n" +
                 "§8⬤ §6Worlds: §8" + worlds + "\n" +
                 "§8⬤ §6Biomes: §8" + biomes + "\n" +
-                "§8⬤ §6Commands: §8" + commands + "\n" +
                 "§8⬤ §6PlaceAir: " + (placeAir ? "§a" : "§c") + randomRotation + "\n" +
                 "§8⬤ §6RandomRotation: " + (randomRotation ? "§a" : "§c") + randomRotation + "\n" +
                 "§8⬤ §6SpawnOnLava: " + (spawnInLava ? "§a" : "§c") + spawnInLava + "\n" +

@@ -7,11 +7,14 @@ import fr.zelytra.novaStructura.manager.schematic.workload.WorkLoad;
 import fr.zelytra.novaStructura.manager.structure.Structure;
 import fr.zelytra.novaStructura.manager.structure.StructureFolder;
 import fr.zelytra.novaStructura.manager.structure.StructureManager;
+import fr.zelytra.novaStructura.utils.BlockEntityNBT;
 import fr.zelytra.novaStructura.utils.Utils;
+import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
 
 import java.io.*;
@@ -24,6 +27,14 @@ public class Schematic implements Serializable {
     private final List<MaterialMap> materialMaps;
     private SchematicBlock[][][] blockMap;
     private final String name;
+    private static transient ArrayList<Material> TileEntityBlock = new ArrayList<>(List.of(
+            Material.COMMAND_BLOCK,
+            Material.REPEATING_COMMAND_BLOCK,
+            Material.CHAIN_COMMAND_BLOCK,
+            Material.LECTERN,
+            Material.SPAWNER,
+            Material.PLAYER_HEAD,
+            Material.PLAYER_WALL_HEAD));
 
     public Schematic(Selector selection, String name) {
 
@@ -58,24 +69,15 @@ public class Schematic implements Serializable {
                                 material,
                                 (blockMap[x][y][z].hasData() ? blockMap[x][y][z].getBlockData() : null), structure.drawLoot()));
 
-                    else
+                    else {
                         setBlockList.add(new SetBlock(location.getWorld(),
                                 location.getBlockX() + x,
                                 location.getBlockY() + y,
                                 location.getBlockZ() + z,
                                 material,
-                                (blockMap[x][y][z].hasData() ? blockMap[x][y][z].getBlockData() : null)));
-
-                    if (material == Material.COMMAND_BLOCK) {
-                        int finalX = x;
-                        int finalY = y;
-                        int finalZ = z;
-                        int finalCmdId = cmdId;
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(NovaStructura.getInstance(),
-                                ()->Utils.executeCommandBlock(location.clone().add(finalX, finalY, finalZ),structure.commands.get(finalCmdId)),10);
-                        cmdId++;
+                                (blockMap[x][y][z].hasData() ? blockMap[x][y][z].getBlockData() : null),
+                                (blockMap[x][y][z].hasNBT() ? blockMap[x][y][z].getNBT() : null)));
                     }
-
                 }
             }
         }
@@ -97,7 +99,17 @@ public class Schematic implements Serializable {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     Block block = selection.corner1.getWorld().getBlockAt(x, y, z);
-                    blockMap[x - minX][y - minY][z - minZ] = new SchematicBlock(getMaterialId(block.getType()), block.getBlockData());
+                    if (TileEntityBlock.contains(block.getType())) {
+                        int finalX = x;
+                        int finalY = y;
+                        int finalZ = z;
+                        Bukkit.getScheduler().runTask(NovaStructura.getInstance(),()->{
+                            String nbt = BlockEntityNBT.getNBTTag(block);
+                            blockMap[finalX - minX][finalY - minY][finalZ - minZ] = new SchematicBlock(getMaterialId(block.getType()), block.getBlockData(),nbt);
+                        });
+                    } else {
+                        blockMap[x - minX][y - minY][z - minZ] = new SchematicBlock(getMaterialId(block.getType()), block.getBlockData());
+                    }
                 }
             }
         }
