@@ -55,38 +55,16 @@ public class OnNewChunk implements Listener {
             }
 
 
-        } else if (structure.isSpawnInLava()) {
-
-            for (int y = Math.max(structure.getMinHeight(), Y_MIN); y <= Math.min(structure.getMaxHeight(), Y_MAX); y++) {
-
-                Block block = chunk.getBlock(randomX, Math.min(y + 1,Y_MAX), randomZ);
-                if (block.getType() == Material.LAVA) {
-                    highestY = y;
-                    foundSpot = true;
-                    break;
-                }
-
-
-            }
-
-        } else if (structure.isSpawnInWater()) {
-
-            for (int y = Math.max(structure.getMinHeight(), Y_MIN); y <= Math.min(structure.getMaxHeight(), Y_MAX); y++) {
-
-                Block block = chunk.getBlock(randomX, Math.min(y + 1,Y_MAX), randomZ);
-                if (block.getType() == Material.WATER) {
-                    highestY = y;
-                    foundSpot = true;
-                    break;
-                }
-
-
-            }
-
         } else {
             for (int y = Y_MAX; y >= Y_MIN; y--) {
                 Block block = chunk.getBlock(randomX, y - 1, randomZ);
-                if (block.getType() != Material.AIR) {
+                boolean isAir = (block.getType() == Material.AIR || block.isBurnable()), isWater = (block.getType() == Material.WATER && structure.isSpawnInWater()), isLava = (block.getType() == Material.LAVA && structure.isSpawnInLava());
+                if (!isAir) {
+                    if (isWater || isLava) {
+                        continue;
+                    }
+
+                    
                     foundSpot = true;
                     highestY = y;
                     break;

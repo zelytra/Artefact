@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 
 public enum LogType {
     INFO("\u001B[36m", "INFO", ChatColor.GOLD),
+    VERBOSE("\u001b[38;5;243m","VERBOSE",ChatColor.GRAY),
     WARN("\u001B[33m", "WARN", ChatColor.YELLOW),
     ERROR("\u001B[31m", "ERROR", ChatColor.RED);
 

@@ -31,6 +31,7 @@ public class StructureManager {
 
         for (File schematic : folder.listFiles()) {
             String name = schematic.getName().replace(StructureFolder.SCHEMATIC.extension, "");
+            NovaStructura.log("Loading Structure " + name , LogType.VERBOSE);
             File config = new File(PATH + StructureFolder.CONFIG + name + StructureFolder.CONFIG.extension);
 
             if (!config.exists()) {
