@@ -34,7 +34,9 @@ public class Schematic implements Serializable {
             Material.LECTERN,
             Material.SPAWNER,
             Material.PLAYER_HEAD,
-            Material.PLAYER_WALL_HEAD));
+            Material.PLAYER_WALL_HEAD,
+            Material.BARREL,
+            Material.CHEST));
 
     public Schematic(Selector selection, String name) {
 
@@ -51,7 +53,6 @@ public class Schematic implements Serializable {
     private List<WorkLoad> generateWorkLoad(Location location, Structure structure) {
         List<WorkLoad> setBlockList = new ArrayList<>();
 
-        int cmdId = 0;
         for (int x = 0; x < blockMap.length; x++) {
             for (int y = 0; y < blockMap[x].length; y++) {
                 for (int z = 0; z < blockMap[x][y].length; z++) {
@@ -171,5 +172,17 @@ public class Schematic implements Serializable {
         File schematic = new File(StructureManager.PATH + StructureFolder.SCHEMATIC.folderName + File.separator + name + StructureFolder.SCHEMATIC.extension);
         schematic.delete();
 
+    }
+
+    public int getSizeX() {
+        return blockMap.length;
+    }
+
+    public int getSizeY() {
+        return blockMap[0].length;
+    }
+
+    public int getSizeZ() {
+        return blockMap[0][0].length;
     }
 }

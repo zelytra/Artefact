@@ -8,6 +8,7 @@ import fr.zelytra.novaStructura.manager.loottable.parser.Loot;
 import fr.zelytra.novaStructura.manager.schematic.Schematic;
 import fr.zelytra.novaStructura.manager.structure.exception.ConfigParserException;
 import fr.zelytra.novaStructura.utils.timer.Timer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -297,7 +298,8 @@ public class Structure {
                 "§8⬤ §6SpawnOnLava: " + (spawnInLava ? "§a" : "§c") + spawnInLava + "\n" +
                 "§8⬤ §6SpawnOnWater: " + (spawnInWater ? "§a" : "§c") + spawnInWater + "\n" +
                 "§8⬤ §6SpawnInCave: " + (spawnInCave ? "§a" : "§c") + spawnInCave + "\n" +
-                "§8⬤ §6SmartPaste: " + (smartPaste ? "§a" : "§c") + smartPaste + "\n";
+                "§8⬤ §6SmartPaste: " + (smartPaste ? "§a" : "§c") + smartPaste + "\n" +
+                "§8⬤ §6Size: " + "§a" + schematic.getSizeX() + ", " + schematic.getSizeY() + ", " + schematic.getSizeZ() + "\n";
     }
 
     public static boolean exist(String name) {

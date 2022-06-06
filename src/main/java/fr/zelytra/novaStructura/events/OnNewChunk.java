@@ -1,10 +1,7 @@
 package fr.zelytra.novaStructura.events;
 
 import fr.zelytra.novaStructura.manager.structure.Structure;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class OnNewChunk implements Listener {
 
-    private final static int CHUNK_SIZE = 16, Y_MAX = Bukkit.getWorld("world").getMaxHeight(), Y_MIN = Bukkit.getWorld("world").getMinHeight();
+    private final static int CHUNK_SIZE = 16; //Y_MAX = Bukkit.getWorld("world").getMaxHeight(), Y_MIN = Bukkit.getWorld("world").getMinHeight();
 
     @EventHandler
     public void onNewChunk(ChunkLoadEvent e) {
@@ -26,8 +23,9 @@ public class OnNewChunk implements Listener {
             }
 
             Location spawn = getRandomLocInChunk(e.getChunk(), structure);
-            if (spawn != null && structure.spawnChecker(spawn)){}
+            if (spawn != null && structure.spawnChecker(spawn)){
                 structure.paste(spawn);
+            }
         }
 
 
@@ -39,12 +37,13 @@ public class OnNewChunk implements Listener {
         int randomZ = (int) (CHUNK_SIZE * Math.random());
         int highestY = 0;
         boolean foundSpot = false;
+        int ymax = chunk.getWorld().getMaxHeight(), ymin = chunk.getWorld().getMinHeight();
 
         if (structure.isSpawnInCave()) {
 
-            for (int y = Math.max(structure.getMinHeight(), Y_MIN); y <= Math.min(structure.getMaxHeight(), Y_MAX); y++) {
+            for (int y = Math.max(structure.getMinHeight(), ymin); y <= Math.min(structure.getMaxHeight(), ymax); y++) {
 
-                Block block = chunk.getBlock(randomX, Math.min(y + 1,Y_MAX), randomZ);
+                Block block = chunk.getBlock(randomX, Math.min(y + 1,ymax), randomZ);
                 if (block.getType() == Material.AIR) {
                     highestY = y;
                     foundSpot = true;
@@ -56,7 +55,7 @@ public class OnNewChunk implements Listener {
 
 
         } else {
-            for (int y = Y_MAX; y >= Y_MIN; y--) {
+            for (int y = ymax; y >= ymin; y--) {
                 Block block = chunk.getBlock(randomX, y - 1, randomZ);
                 boolean isAir = (block.getType() == Material.AIR || block.isBurnable()), isWater = (block.getType() == Material.WATER && structure.isSpawnInWater()), isLava = (block.getType() == Material.LAVA && structure.isSpawnInLava());
                 if (!isAir) {
