@@ -64,23 +64,21 @@ public class Schematic implements Serializable {
                     if (!structure.isPlaceAir() && material == Material.AIR) continue;
                     if (material == Material.STRUCTURE_VOID) continue;
 
-                    if (structure.getLootTable() != null && structure.getLootContainer().contains(material))
+                    /*if (structure.getLootTable() != null && structure.getLootContainer().contains(material))
                         setBlockList.add(new SetBlock(location.getWorld(),
                                 location.getBlockX() + x,
                                 location.getBlockY() + y,
                                 location.getBlockZ() + z,
                                 material,
-                                (blockMap[x][y][z].hasData() ? blockMap[x][y][z].getBlockData() : null), structure.drawLoot()));
+                                (blockMap[x][y][z].hasData() ? blockMap[x][y][z].getBlockData() : null), structure.drawLoot()));*/
 
-                    else {
-                        setBlockList.add(new SetBlock(location.getWorld(),
-                                location.getBlockX() + x,
-                                location.getBlockY() + y,
-                                location.getBlockZ() + z,
-                                material,
-                                (blockMap[x][y][z].hasData() ? blockMap[x][y][z].getBlockData() : null),
-                                (blockMap[x][y][z].hasNBT() ? blockMap[x][y][z].getNBT() : null)));
-                    }
+                    setBlockList.add(new SetBlock(location.getWorld(),
+                            location.getBlockX() + x,
+                            location.getBlockY() + y,
+                            location.getBlockZ() + z,
+                            material,
+                            (blockMap[x][y][z].hasData() ? blockMap[x][y][z].getBlockData() : null),
+                            (blockMap[x][y][z].hasNBT() ? blockMap[x][y][z].getNBT() : null)));
                 }
             }
         }

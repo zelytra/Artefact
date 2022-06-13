@@ -55,7 +55,7 @@ public class OnNewChunk implements Listener {
 
 
         } else {
-            for (int y = ymax; y >= ymin; y--) {
+            for (int y = ymax; y > ymin; y--) {
                 Block block = chunk.getBlock(randomX, y - 1, randomZ);
                 boolean isAir = (block.getType() == Material.AIR || block.isBurnable()), isWater = (block.getType() == Material.WATER && structure.isSpawnInWater()), isLava = (block.getType() == Material.LAVA && structure.isSpawnInLava());
                 if (!isAir) {
