@@ -55,7 +55,7 @@ public class SetBlock implements WorkLoad {
     @Override
     public void compute() {
         Block block = world.getBlockAt(x, y, z);
-        block.setType(material);
+        block.setType(material,false);
 
         if (data != null)
             block.setBlockData(data);

@@ -36,7 +36,14 @@ public class Schematic implements Serializable {
             Material.PLAYER_HEAD,
             Material.PLAYER_WALL_HEAD,
             Material.BARREL,
-            Material.CHEST));
+            Material.CHEST,
+            Material.TRAPPED_CHEST,
+            Material.DISPENSER,
+            Material.DROPPER,
+            Material.HOPPER,
+            Material.RED_BANNER,
+            Material.WHITE_BANNER,
+            Material.BLACK_BANNER));
 
     public Schematic(Selector selection, String name) {
 

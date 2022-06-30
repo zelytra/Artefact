@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    id("io.papermc.paperweight.userdev") version "1.3.3"
+    id("io.papermc.paperweight.userdev") version "1.3.7"
 }
 allprojects {
     repositories {
@@ -17,11 +17,11 @@ allprojects {
 }
 
 dependencies {
-    paperDevBundle("1.18.2-R0.1-SNAPSHOT")
+    paperDevBundle("1.19-R0.1-SNAPSHOT")
 }
 
 group = "fr.zelytra"
-version = "1.0"
+version = "1.1"
 description = "NovaStructura"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
